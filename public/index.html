@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+     <meta charset="UTF-8">
+  <title>TechJobs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+  <!-- Roboto Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i&display=swap" rel="stylesheet">
+
+  <!-- bootstrap css -->
+  <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/css/bootstrap.min.css">
+
+
+
+  <!-- Font Awesome -->
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+  <!-- select 2 css -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/select2.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/owlcarousel/owl.carousel.min.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/owlcarousel/owl.theme.default.min.css">
+   <!-- main css -->
+  <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/css/style.css"> 
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -39,5 +40,25 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/readmore.js"></script>
+    <script type="text/javascript">
+      $('.catelog-list').readmore({
+        speed: 75,
+        maxHeight: 150,
+        moreLink: '<a href="#">Xem thêm<i class="fa fa-angle-down pl-2"></i></a>',
+        lessLink: '<a href="#">Rút gọn<i class="fa fa-angle-up pl-2"></i></a>'
+      });
+    </script>
+<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="%PUBLIC_URL%/js/jquery-3.4.1.slim.min.js"></script>
+    <script src="%PUBLIC_URL%/js/popper.min.js"></script>
+    <script src="%PUBLIC_URL%/js/bootstrap.min.js"></script>
+    <script src="%PUBLIC_URL%/js/select2.min.js"></script>
+    <script src="%PUBLIC_URL%/js/jobdata.js"></script>
+
+    <!-- <script type="text/javascript" src="js/pagination.js"></script> -->
+    <script src="%PUBLIC_URL%/js/owlcarousel/owl.carousel.js"></script>
   </body>
 </html>
