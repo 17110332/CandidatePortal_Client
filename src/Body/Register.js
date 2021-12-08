@@ -22,7 +22,7 @@ class Register extends Component{
             Email:"",
             Username:""
         }
-    }
+    } 
     onChange =(e)=>{
         var target = e.target;
         var name = target.name;

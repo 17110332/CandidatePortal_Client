@@ -4,6 +4,7 @@ import Notfound from "./Body/Notfound";
 import Jobdetail from "./Body/Jobdetail";
 import Login from "./Body/Login";
 import Register from "./Body/Register";
+import Myprofile from "./Profile/Myprofile";
 const routes = [
     {
         path: "/",
@@ -24,6 +25,11 @@ const routes = [
         path: "/Register",
         exact: false,
         main: ()=><Register />
+    },
+    {
+        path: "/Myprofile",
+        exact: false,
+        main: ()=><Myprofile />
     },
     {
         path: "",

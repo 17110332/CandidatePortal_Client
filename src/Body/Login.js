@@ -1,8 +1,67 @@
 import React, {Component} from 'react';
-import {Link} from "react-router-dom";
+import {Link,Redirect } from "react-router-dom";
+ import { ToastContainer,toast } from 'react-toastify';  
+ import 'react-toastify/dist/ReactToastify.css';  
+ import Listconst from './../Const/Listconst';
+ import axios from 'axios';
+ import {decode as base64_decode, encode as base64_encode} from 'base-64';
+ import Joblist  from './Joblist';
+ const APIstr = Listconst.API;
 class Login extends Component{
+  constructor(props)
+    {
+        super(props);
+        this.state={
+            Password:"",
+            Username:""
+        }
+    } 
+    onChange =(e)=>{
+      var target = e.target;
+      var name = target.name;
+      var value = target.type=="checkbox" ? target.checked : target.value;
+      this.setState({
+        [name]: value
+      });
+    }
+
+    onLogin =()=>{
+      let{Password,Username} = this.state
+        if(Username=="" || Password=="")
+        {
+            toast.warning('Tài khoản hoặc mật khẩu không được trống!',{autoClose:2000})
+            return;
+        }
+        var account = new FormData();
+        account.set('Username',Username);
+        account.set('Password',base64_encode(Password));
+        axios.post(APIstr +`api/AccountAction/Login`,account)
+        .then(res=>{
+                if(res && res.data==0)
+                {
+                  toast.error('Sai tài khoản hoặc mật khẩu!')
+                  return;
+                }
+                else
+                {
+                  debugger
+                  console.log("ressssss",res)
+                  if(res.data && res.data.sessionLogin)
+                  {
+                      localStorage.setItem("TokenLogin",res.data.sessionLogin)
+                  }
+                  let urlredirec =window.location.href ? window.location.href.split("//")[0] +"//" + window.location.href.split("//")[1].split("/")[0]: ""
+                  window.location.href=urlredirec;
+                }
+        })
+        .catch(err=>{
+            toast.error('Đăng nhập thất bại!')
+            return;
+        })
+    }
     render()
     {
+      let{Password,Username} = this.state
         return(
             <div className="login-main">
           <div className="w-login m-auto">
@@ -18,13 +77,13 @@ class Login extends Component{
                   <div className="input-div one">
                     <div className="div lg-lable">
                       <h5>Username</h5>
-                      <input type="text" className="input form-control-lgin" />
+                      <input type="text" className="input form-control-lgin"  name="Username" value={Username}  onChange={this.onChange}/>
                     </div>
                   </div>
                   <div className="input-div pass">
                     <div className="div lg-lable">
                       <h5>Password</h5>
-                      <input type="password" className="input form-control-lgin" />
+                      <input type="password" className="input form-control-lgin" name="Password" value={Password}  onChange={this.onChange} />
                     </div>
                   </div>
                   <div className="form-group d-block frm-text">
@@ -32,7 +91,7 @@ class Login extends Component{
                     <Link className="fg-login float-right d-inline-block" to="/Register">Bạn chưa có tài khoản? Đăng ký</Link>
 
                   </div>
-                  <button type="submit" className="btn btn-primary float-right btn-login d-block w-100">
+                  <button type="button" className="btn btn-primary float-right btn-login d-block w-100" onClick={this.onLogin}>
                     Đăng Nhập
                   </button>
                   <div className="form-group d-block w-100 mt-5">

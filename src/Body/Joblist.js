@@ -89,7 +89,6 @@ class Joblist extends Component{
     render()
     {
         let {lstJob,PageSize,PageIndex,TotalPage,loading} = this.state;
-        console.log("adddd",lstJob)
         return(
             <div>
                 <Search _OnSearch={this.OnSearch} _onloadingSearch={this.onloadingSearch}/>

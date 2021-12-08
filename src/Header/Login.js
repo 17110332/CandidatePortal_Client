@@ -1,8 +1,35 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+
 class Login extends Component{
+    constructor(props){
+        super(props);
+        this.state={
+            FullName:""
+        }
+    }
+    componentDidMount()
+    {
+        let tokenlogin = localStorage.getItem("TokenLogin");
+        let fullname=tokenlogin ? base64_decode(tokenlogin).split("___+=()*")[0] : ""
+        this.setState({
+            FullName:fullname
+        })
+    }
+    OnLogOut = ()=>
+    {
+
+        this.setState({
+            FullName:""
+        },()=>{
+            localStorage.removeItem("TokenLogin");
+        })
+    }
     render()
     {
+        let tokenlogin = localStorage.getItem("TokenLogin");
+        let {FullName} = this.state;
         return(
             <div>
                 <div className="container-fluid fluid-nav" style={{ backgroundColor:'#0c0c38'}}> 
@@ -13,7 +40,7 @@ class Login extends Component{
                                     <img src="img/techjobs_bgb.png" alt="" />
                                </Link>
                                 <button className="navbar-toggler tnavbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                    <i className="fa fa-bars icn-res" aria-hidden="true"></i>\
+                                    <i className="fa fa-bars icn-res" aria-hidden="true"></i>
                                 </button>
     
                                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -42,12 +69,37 @@ class Login extends Component{
                                         <li className="nav-item active">
                                             <a  className="nav-link" ><i className="fa fa-search" aria-hidden="true"></i> <span className="hidden-text">Tìm kiếm</span></a>
                                         </li>
-                                        <li className="nav-item">
-                                        <Link className="nav-link" to="/Register">Đăng Ký</Link>
-                                        </li>
-                                        <li className="nav-item">
-                                             <Link className="nav-link" to="/Login">Đăng Nhập</Link>
-                                        </li>
+                                        {
+                                            FullName !="" && 
+                                            <li className="nav-item dropdown">
+                                                 <a className="nav-link dropdown-toggle" to="/Register" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Xin chào {FullName}</a>
+                                                 <div className="dropdown-menu tdropdown" aria-labelledby="navbarDropdown">
+                                                 <Link className="dropdown-item" to="/Myprofile">Thông tin cá nhân</Link>
+                                                </div>
+                                            </li>
+                                            
+                                        }
+                                        {
+                                              FullName !="" && 
+                                            <li className="nav-item">
+                                                 <Link className="nav-link" to="/" onClick={this.OnLogOut}>Đăng xuất</Link>
+                                            </li>
+                                        }
+                                        {
+                                            FullName =="" && 
+                                            <li className="nav-item">
+                                                <Link className="nav-link" to="/Register">Đăng Ký</Link>
+                                            </li>
+                                            
+                                        }
+                                        {
+                                              FullName =="" && 
+                                              <li className="nav-item">
+                                                    <Link className="nav-link" to="/Login">Đăng Nhập</Link>
+                                               </li>
+                                        }
+                                       
+                                        
                                         <li className="nav-item dropdown">
                                             <a className="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             VI

@@ -60,5 +60,14 @@
 
     <!-- <script type="text/javascript" src="js/pagination.js"></script> -->
     <script src="%PUBLIC_URL%/js/owlcarousel/owl.carousel.js"></script>
+    <script>
+      $(document).ready(function(){
+          $('.recuitment-card-acttachment').change(function(e){
+              var fileName = e.target.files[0].name;
+              document.getElementById("previewFileName").innerHTML = fileName;
+              $(".output-file").append('<style>.output-file:before{display:inline-block !important;}</style>');
+          });
+      }); 
+  </script>
   </body>
 </html>
