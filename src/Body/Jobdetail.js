@@ -26,7 +26,6 @@ class Jobdetail extends Component{
             if(match)
             {
                 var RecruitID =match.params.id;
-               // console.log(id);
                axios.get(APIstr +`api/Home/GetRecruitDetail/${RecruitID}`)
                .then(res=>{
                    this.setState({
@@ -89,7 +88,6 @@ class Jobdetail extends Component{
                 loading:true
             },()=>{
                 let RecruitID =match.params.id;
-                // console.log(id);
                 axios.get(APIstr +`api/Home/GetRecruitDetail/${RecruitID}`)
                 .then(res=>{
                     this.setState({

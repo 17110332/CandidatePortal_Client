@@ -32,7 +32,6 @@ class Joblist extends Component{
         this.setState({loading:true},()=>{
             axios.post(APIstr +`api/Home/GetJobRecruits/${condition}`,Params)
             .then(res=>{
-                console.log("xxx",res)
                 this.setState({
                     lstJob:res && res.data && res.data.lstJob.length >0 ? res.data.lstJob :[],
                     PageSize:res && res.data ? res.data.pageSize:0,

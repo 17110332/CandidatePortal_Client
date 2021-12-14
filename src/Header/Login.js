@@ -12,9 +12,11 @@ class Login extends Component{
     componentDidMount()
     {
         let tokenlogin = localStorage.getItem("TokenLogin");
-        let fullname=tokenlogin ? base64_decode(tokenlogin).split("___+=()*")[0] : ""
+        let fullnameencode=tokenlogin ? base64_decode(tokenlogin).split("___+=()*")[0] : ""
+        let fullname = fullnameencode ? fullnameencode.split("FFF"):"";
+        console.log("aaa",fullname)
         this.setState({
-            FullName:fullname
+            FullName:fullname && fullname.length > 0 ?fullname[0] +" "+fullname[1] :""
         })
     }
     OnLogOut = ()=>

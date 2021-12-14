@@ -159,7 +159,6 @@ class Search extends Component{
       
          axios.post(APIstr +`api/Home/GetJobRecruits/${condition}`,Params)
         .then(res=>{
-            console.log("Search",res)
             let lstjob = res && res.data && res.data.lstJob.length >0 ? res.data.lstJob :[]
             let PageSize =res && res.data ? res.data.pageSize:0
             let TotalPage =res && res.data ? res.data.totalPage:0

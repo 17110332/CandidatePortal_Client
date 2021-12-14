@@ -73,7 +73,6 @@ class Register extends Component{
             toast.warning('Mật khẩu nhập lại không khớp',{autoClose:2000})
             return;
         }
-        console.log("this.state",this.state);
         var account = new FormData();
         account.set('FirstName',FirstName);
         account.set('LastName',LastName);
@@ -83,7 +82,6 @@ class Register extends Component{
         account.set('Password',Password);
         axios.post(APIstr +`api/AccountAction/RegistAccount`,account)
         .then(res=>{
-            console.log("ress",res)
             this.setState({
                 PasswordConfirm:"",
                 Password:"",

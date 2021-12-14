@@ -44,8 +44,6 @@ class Login extends Component{
                 }
                 else
                 {
-                  debugger
-                  console.log("ressssss",res)
                   if(res.data && res.data.sessionLogin)
                   {
                       localStorage.setItem("TokenLogin",res.data.sessionLogin)
@@ -70,20 +68,20 @@ class Login extends Component{
                 <img src="img/banner-login.png" />
               </div>
               <div className="col-md-6 col-sm-12 col-12 login-main-right">
-                <form className="login-form">
+                <form className="login-form"> 
                   <div className="login-main-header">
                     <h3>Đăng Nhập</h3>
                   </div>
                   <div className="input-div one">
                     <div className="div lg-lable">
                       <h5>Username</h5>
-                      <input type="text" className="input form-control-lgin"  name="Username" value={Username}  onChange={this.onChange}/>
+                      <input type="text" className="input form-control-lgin"  name="Username" value={Username}  onChange={this.onChange} placeholder=''/>
                     </div>
                   </div>
                   <div className="input-div pass">
                     <div className="div lg-lable">
                       <h5>Password</h5>
-                      <input type="password" className="input form-control-lgin" name="Password" value={Password}  onChange={this.onChange} />
+                      <input type="password" className="input form-control-lgin" name="Password" value={Password}  onChange={this.onChange} placeholder='' />
                     </div>
                   </div>
                   <div className="form-group d-block frm-text">

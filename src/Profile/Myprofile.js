@@ -5,6 +5,7 @@ import  '../Body/Search.css'
 import axios from 'axios';
 import { ToastContainer,toast } from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css';  
+import  './Myprofile.css'
 const APIstr = Listconst.API;
 
 class Myprofile extends Component{
@@ -44,13 +45,16 @@ class Myprofile extends Component{
             titleDoc: "",
             username: "",
             wardCode: "",
-            workProgress: ""
+            workProgress: "",
+            Avatar:"url(https://i.pravatar.cc/500?img=7)",
+            FileAttach:"",
+            filename:""
         }
     }
     componentDidMount()
     {
         let sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
-        //load thọng tin ứng viên
+                   //load thọng tin ứng viên
         axios.get(APIstr + `api/Applicant/GetApplicantByUserName/${sessionlogin}`)
         .then(res=>{
             console.log("GetApplicantByUserName",res)
@@ -82,6 +86,7 @@ class Myprofile extends Component{
                     console.log(err)
                 })
             }
+            console.log("personal.provinceCode",personal.provinceCode)
             this.setState({
                 infperson:res.data.length >0 ? res.data[0] : {},
                 applicantCode: personal.applicantCode ? personal.applicantCode : "",
@@ -112,6 +117,8 @@ class Myprofile extends Component{
                 district:personal.districtCode ? personal.districtCode :  "",
                 ward:personal.wardCode ? personal.wardCode :  "",
                 street:personal.streetName ? personal.streetName :  "",
+                Avatar:personal.avatar ?"url('data:image/jpeg;base64," + personal.avatar +"')":"url(https://i.pravatar.cc/500?img=7)",
+                filename:personal.fileName ? personal.fileName :  "",
             })
         })
         .catch(err=>{
@@ -122,7 +129,9 @@ class Myprofile extends Component{
         .then(res=>{
             this.setState({
                 lstprovince:res.data.length >0 ? res.data:[],
-                province:res.data.length >0 ?res.data[0].districtCode :""
+             //   province:res.data.length >0 ?res.data[0].provinceCode :"",
+             //   provinceCode:res.data.length >0 ?res.data[0].provinceCode :""
+                //provinceCode:res.data.length > 0 && res.data.filter(item=> item.provinceCode == infperson.provinceCode).length > 0 ? infperson.provinceCode : (res.data.length > 0 ? res.data[0].provinceCode : "")
             })
         })
         .catch(err=>{
@@ -133,15 +142,15 @@ class Myprofile extends Component{
     getProvince=e=>{
         let {infperson}=this.state;
         this.setState({
-            province: e.target.value
+            province: e.target.value,
+            provinceCode:e.target.value
         },()=>{
-            // load quận huyện theo tỉnh thành
+            // load quận huyện theo tỉnh thànhprovince
             axios.get(APIstr +`api/Country/GetDistrict/${e.target.value}`)
             .then(res=>{
-                console.log("XXXXXyyyyX",res.data,infperson,infperson.districtCode,res.data.includes(infperson.districtCode))
                 this.setState({
                     lstdictrict:res.data.length >0 ? res.data:[],
-                    district:res.data.length > 0 && res.data.filter(item=> item.districtCode == infperson.districtCode).length > 0 ? infperson.districtCode : (res.data.length > 0 ? res.data[0].districtCode : "")
+                    district:res.data.length > 0 && res.data.filter(item=> item.districtCode == infperson.districtCode).length > 0 ? infperson.districtCode :  ""
                 },()=>{
                   
                     if(this.state.district && this.state.district !="")
@@ -149,10 +158,9 @@ class Myprofile extends Component{
                          // load xã/phường theo quận huyện
                         axios.get(APIstr +`api/Country/GetWards/${this.state.district}`)
                         .then(ress=>{
-                            console.log("XXXXXX",ress.data,infperson.wardCode,infperson,ress.data.includes(infperson.wardCode))
                             this.setState({
                                 lstward:ress.data.length >0 ? ress.data:[],
-                                ward:ress.data.length > 0 && ress.data.filter(item=> item.wardCode == infperson.wardCode).length > 0  ? infperson.wardCode : (ress.data.length > 0 ? ress.data[0].wardCode : "")
+                                ward:ress.data.length > 0 && ress.data.filter(item=> item.wardCode == infperson.wardCode).length > 0  ? infperson.wardCode :""
                             })
                         })
                         .catch(err=>{
@@ -176,8 +184,7 @@ class Myprofile extends Component{
             axios.get(APIstr +`api/Country/GetWards/${e.target.value}`)
             .then(res=>{
                 this.setState({
-                    lstward:res.data.length >0 ? res.data:[],
-                    ward:res.data.length >0 ? res.data[0]:""
+                    lstward:res.data.length >0 ? res.data:[]
                 })
             })
             .catch(err=>{
@@ -249,11 +256,17 @@ class Myprofile extends Component{
             toast.error('Nhập ngày sinh!');
             return;
         }
-        else if(!district)
+        else if(!province || province=="")
+        {
+            toast.error('Nhập tỉnh đang ở!');
+            return;
+        }
+        else if(!district || district=="")
         {
             toast.error('Nhập huyện đang ở!');
             return;
         }
+       
         else if(!email)
         {
             toast.error('Nhập email liên lạc!');
@@ -302,7 +315,7 @@ class Myprofile extends Component{
             return;
         }
 
-        else if(!ward)
+        else if(!ward || ward=="")
         {
             toast.error('Nhập thị trấn/phường/xã!');
             return;
@@ -313,7 +326,7 @@ class Myprofile extends Component{
             return;
         }
 
-
+        console.log("provinceCode",provinceCode,province)
         infopersonAdd.set('ApplicantCode',infperson.applicantCode);
         infopersonAdd.set('Avatar',avatar);
         infopersonAdd.set('BirthDay',birthDay);
@@ -331,7 +344,7 @@ class Myprofile extends Component{
         infopersonAdd.set('Level',level);
         infopersonAdd.set('Married',married);
         infopersonAdd.set('Mobile',mobile);
-        infopersonAdd.set('ProvinceCode',provinceCode);
+        infopersonAdd.set('ProvinceCode',province);
         infopersonAdd.set('IntroduceYourself',introduceYourself);
         infopersonAdd.set('School',school);
 
@@ -344,17 +357,129 @@ class Myprofile extends Component{
         //axios.post(APIstr +`api/AccountAction/SaveInfoPersonal`,infopersonAdd)
          axios.post(APIstr +`api/Applicant/SaveInfoPersonal`,infopersonAdd)
         .then(res=>{
-            console.log("aaaa",res)
             toast.success('Đã lưu xong!')
         })
-        // .catch(err=>{
-        //     console.log("eee",err)
-        //     // toast.error('Lưu lỗi !')
-        //     // return;
-        // })
+        .catch(err=>{
+            console.log("eee",err)
+            // toast.error('Lưu lỗi !')
+            // return;
+        })
+    }
+    onImageChange = e => {
+        e.preventDefault();
+        let file = e.target.files[0];  
+        console.log("hahaha",file);
+        debugger
+        if(file && (file.type !="image/png") && (file.type !="image/jpg") && (file.type !="image/jpeg"))
+        {
+            toast.error('Avatar không đúng định dạng!')
+            return;
+        }
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+              //      console.log("reader.result",reader.result)
+                    // // Make a fileInfo Object
+                    // let fileInfo = {
+                    //     name: file.name,
+                    //     type: file.type,
+                    //     size: Math.round(file.size / 1000) + ' kB',
+                    //     base64: reader.result,
+                    //     file: file,
+                    // };
+            this.setState({
+                Avatar:reader.result ?"url('" + reader.result +"')":"url(https://i.pravatar.cc/500?img=7)",
+                avatar:reader.result.replace("data:image/png;base64,","").replace("data:image/jpg;base64,","").replace("data:image/jpeg;base64,","")
+            });
+        };
+        reader.onloadend = function(progressEvent) {
+            let me= this;
+            //gọi api lưu base64str vào db
+            if(reader.result)
+            {
+                 let base64str = reader.result.replace("data:image/png;base64,","").replace("data:image/jpg;base64,","").replace("data:image/jpeg;base64,","");         
+                 console.log("base64str",base64str)
+                 let tokenlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin") : "";
+                 var request =  new FormData();
+                 request.set('FileBase64',base64str);
+                 request.set('TokenLogin',tokenlogin);
+                 request.set('Options',1);
+                 request.set('FileName',file.name);
+              // axios.post(APIstr +`api/Applicant/UploadFile/${base64str}`)
+              axios.post(APIstr +`api/Applicant/UploadFile`,request)
+                 .then(res=>{
+                     console.log("upload IMAGE", res);
+                 })
+            }
+        }
+    }
+    onFileChange=(e)=>{
+        e.preventDefault();
+        let previewFileName = document.getElementById("previewFileName");
+
+        let file = e.target.files[0];  
+        console.log("file cv",file);
+         if(file && file.type !="application/pdf" 
+         && file.type !="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        {
+            toast.error('File đính kèm phải là file word hoặc pdf');
+            previewFileName.innerHTML=this.state.filename;
+            return;
+        }
+        previewFileName.innerHTML=file.name;
+
+         let reader = new FileReader();
+         reader.readAsDataURL(file);
+         reader.onload = () => {
+            if(reader.result)
+            {
+                 let base64str = reader.result.split("base64,").length > 1 ? reader.result.split("base64,")[1] : "";     
+                 console.log("base64str",base64str)
+                 let tokenlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin") : "";
+                 var request =  new FormData();
+                 request.set('FileBase64',base64str);
+                 request.set('TokenLogin',tokenlogin);
+                 request.set('Options',2);
+                 request.set('FileName',file.name);
+                 axios.post(APIstr +`api/Applicant/UploadFile`,request)
+                 .then(res=>{
+                     console.log("upload file CV", res);
+                     this.setState({
+                        cvApplicant:base64str,
+                        filename:file.name
+                    });
+                 })
+            }
+          
+        };
+    }
+    DownloadCV=()=>{
+        let {filename,cvApplicant} = this.state;
+        let linkSource='';
+        if(filename.includes('.doc'))
+        {
+             linkSource = `data:application/pdf;base64,${cvApplicant}`;
+        }
+        else if(filename.includes('.pdf'))
+        {
+             linkSource = `data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${cvApplicant}`;
+        }
+        else
+        {
+            toast.error('File tải không được hỗ trợ!');
+            return;
+        }
+        const downloadLink = document.createElement('a');//target="_blank"
+     //   downloadLink.setAttribute('target', '_blank');
+        document.body.appendChild(downloadLink);
+    
+        downloadLink.href = linkSource;
+        downloadLink.target = '_self';
+        downloadLink.download = filename;
+        downloadLink.click(); 
     }
     render(){
-        let  {lstprovince, lstdictrict,lstward} = this.state;
+        let  {lstprovince, lstdictrict,lstward,Avatar,filename} = this.state;
         let {infperson,applicantCode, avatar, birthDay,cvApplicant,districtCode, email, exp, firstName, gender,graduated,introduceYourself,lastName,level, married,mobile,provinceCode,school,skill,skillOther,streetName, titleDoc,username, wardCode, workProgress}= this.state;
         let checked=graduated==1 ? true: false;
         let fullname=firstName+' '+lastName;
@@ -421,11 +546,11 @@ class Myprofile extends Component{
                                     <div className="col-md-3">
                                         <div className="avatar-upload">
                                         <div className="avatar-edit">
-                                            <input type="file" id="imageUpload" accept=".png, .jpg, .jpeg" />
+                                           <input type="file" id="imageUpload"  onChange={this.onImageChange} />   {/*accept=".png, .jpg, .jpeg" */}
                                             <label htmlFor="imageUpload"></label>
                                         </div>
                                         <div className="avatar-preview">
-                                            <div id="imagePreview" style={{backgroundImage:'url(https://i.pravatar.cc/500?img=7)' }}>
+                                            <div id="imagePreview" style={{backgroundImage:Avatar }}>
                                             </div>
                                         </div>
                                     </div>
@@ -463,9 +588,9 @@ class Myprofile extends Component{
                                             </label>
                                             <div className="col-sm-9">
                                                 <select type="text" className="form-control SearchCustom" name="gender" onChange={this.onChange}>
-                                                    <option value="0" data-select2-id="21">Chưa xác định</option>
-                                                    <option value="1" data-select2-id="22">Nam</option>
-                                                    <option value="2" data-select2-id="23">Nữ</option>
+                                                    <option value="0" selected={gender == 0}>Chưa xác định</option>
+                                                    <option value="1" selected={gender == 1}>Nam</option>
+                                                    <option value="2" selected={gender == 2}>Nữ</option>
                                                 </select>
                                                 {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="20" style={{width: "375px;"}}>
                                                     <span className="selection"><span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" 
@@ -495,6 +620,8 @@ class Myprofile extends Component{
                                             <label className="col-sm-3 col-form-label text-right label">Tỉnh/ Thành phố<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
                                             <select type="text" className="form-control SearchCustom" name="province" onChange={this.getProvince} >
+                                                <option  value="" selected={infperson.provinceCode == null}></option>
+
                                                 {this.ShowListProvince(lstprovince,infperson)}
                                             </select>
                                             {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="24" style={{width: "375px;"}}>
@@ -510,6 +637,8 @@ class Myprofile extends Component{
                                             <label className="col-sm-3 col-form-label text-right label">Quận/huyện<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
                                             <select type="text" className="form-control SearchCustom" name="district" onChange={this.getDistrict} >
+                                            <option  value="" selected={infperson.districtCode == null}></option>
+
                                                 {this.ShowListDistrict(lstdictrict,infperson)}
                                             </select>
                                             </div>
@@ -519,6 +648,8 @@ class Myprofile extends Component{
                                             <label className="col-sm-3 col-form-label text-right label">Xã/phường<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
                                             <select type="text" className="form-control SearchCustom" name="ward" onChange={this.getWard}>
+                                            <option  value="" selected={infperson.wardCode == null}></option>
+
                                             {this.ShowListWard(lstward,infperson)}
                                             
                                             </select>
@@ -555,19 +686,17 @@ class Myprofile extends Component{
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Chọn hồ sơ đính kèm<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                            <input type="file" id="file" className="recuitment-card-acttachment" />
+                                            <input type="file" id="file" className="recuitment-card-acttachment" onChange={this.onFileChange}/>
                                             <label htmlFor="file" className="btn-1"><i className="fa fa-paperclip pr-2"></i>Chọn file</label>
-                                                 {/* <script>
-                                                $(document).ready(function(){
-                                                    $('.recuitment-card-acttachment').change(function(e){
-                                                        var fileName = e.target.files[0].name;
-                                                        document.getElementById("previewFileName").innerHTML = fileName;
-                                                        $(".output-file").append('<style>.output-file:before{display:inline-block !important;}</style>');
-                                                    });
-                                                }); 
-                                            </script> */}
+                                           
                                             <p className="output-file">
-                                                <span id="previewFileName"></span>
+                                                <span id="previewFileName">{filename}</span>
+                                                {
+                                                    cvApplicant!="" &&                                    
+                                                    <button className="btnExport" onClick={()=>this.DownloadCV()}><i className="fa fa-download"></i> Download </button>
+
+                                                }
+
                                             </p>
                                             </div>
                                         </div>
@@ -730,13 +859,13 @@ class Myprofile extends Component{
                         <div className="col-md-4 col-sm-12 col-12">
                             <div className="recuiter-info">
                             <div className="recuiter-info-avt">
-                                <img src="img/girl.jpg" />
+                                <img src={`data:image/png;base64,${avatar}`} />
                             </div>
                             <div className="clearfix list-rec">
                                 <h4>{fullname}</h4>
                                 <ul>
-                                <li><a href="#">Việc làm yêu thích<strong>(450)</strong></a></li>
-                                <li><a href="#">Việc làm đã nộp <strong>(1150)</strong></a></li>
+                                <li><a href="#">Việc làm yêu thích<strong>(0)</strong></a></li>
+                                <li><a href="#">Việc làm đã nộp <strong>(0)</strong></a></li>
                                 </ul>
                             </div>
                             </div>
