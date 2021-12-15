@@ -6,6 +6,8 @@ import axios from 'axios';
 import { ToastContainer,toast } from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css';  
 import  './Myprofile.css'
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+
 const APIstr = Listconst.API;
 
 class Myprofile extends Component{
@@ -48,13 +50,20 @@ class Myprofile extends Component{
             workProgress: "",
             Avatar:"url(https://i.pravatar.cc/500?img=7)",
             FileAttach:"",
-            filename:""
+            filename:"",
+            role:""
         }
     }
     componentDidMount()
     {
+        debugger
         let sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
-                   //load thọng tin ứng viên
+        let role = base64_decode(sessionlogin).split("!@#$#@!").length >1 ?base64_decode(sessionlogin).split("!@#$#@!")[1] : 1; //1: ứng viên, 2: hr
+        console.log("role= ", role);
+        this.setState({
+            role:role
+        })
+        //load thọng tin ứng viên
         axios.get(APIstr + `api/Applicant/GetApplicantByUserName/${sessionlogin}`)
         .then(res=>{
             console.log("GetApplicantByUserName",res)
@@ -479,7 +488,7 @@ class Myprofile extends Component{
         downloadLink.click(); 
     }
     render(){
-        let  {lstprovince, lstdictrict,lstward,Avatar,filename} = this.state;
+        let  {lstprovince, lstdictrict,lstward,Avatar,filename,role} = this.state;
         let {infperson,applicantCode, avatar, birthDay,cvApplicant,districtCode, email, exp, firstName, gender,graduated,introduceYourself,lastName,level, married,mobile,provinceCode,school,skill,skillOther,streetName, titleDoc,username, wardCode, workProgress}= this.state;
         let checked=graduated==1 ? true: false;
         let fullname=firstName+' '+lastName;
@@ -546,7 +555,7 @@ class Myprofile extends Component{
                                     <div className="col-md-3">
                                         <div className="avatar-upload">
                                         <div className="avatar-edit">
-                                           <input type="file" id="imageUpload"  onChange={this.onImageChange} />   {/*accept=".png, .jpg, .jpeg" */}
+                                           <input type="file" id="imageUpload"  onChange={this.onImageChange} disabled={role==1?false:true}/>   {/*accept=".png, .jpg, .jpeg" */}
                                             <label htmlFor="imageUpload"></label>
                                         </div>
                                         <div className="avatar-preview">
@@ -559,26 +568,26 @@ class Myprofile extends Component{
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Họ<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                                <input type="text" className="form-control SearchCustom" placeholder="Nhập họ" value={firstName} name="firstName" onChange={this.onChange}/>
+                                                <input disabled={role==1?false:true} type="text" className="form-control SearchCustom" placeholder="Nhập họ" value={firstName} name="firstName" onChange={this.onChange}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Tên<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                                <input type="text" className="form-control SearchCustom" placeholder="Nhập tên lót + tên" value={lastName} name="lastName" onChange={this.onChange}/>
+                                                <input disabled={role==1?false:true} type="text" className="form-control SearchCustom" placeholder="Nhập tên lót + tên" value={lastName} name="lastName" onChange={this.onChange}/>
                                             </div>
                                         </div>
 
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Số điện thoại</label>
                                             <div className="col-sm-9">
-                                                <input type="number" className="form-control SearchCustom" value={mobile} name="mobile" onChange={this.onChange}/>
+                                                <input disabled={role==1?false:true} type="number" className="form-control SearchCustom" value={mobile} name="mobile" onChange={this.onChange}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Email</label>
                                             <div className="col-sm-9">
-                                                <input type="email" className="form-control SearchCustom" value={email} name="email" onChange={this.onChange}/>
+                                                <input disabled={role==1?false:true} type="email" className="form-control SearchCustom" value={email} name="email" onChange={this.onChange}/>
                                             </div>
                                         </div>
 
@@ -587,56 +596,43 @@ class Myprofile extends Component{
                                             <span style={{color: "red"}} className="pl-2">*</span>
                                             </label>
                                             <div className="col-sm-9">
-                                                <select type="text" className="form-control SearchCustom" name="gender" onChange={this.onChange}>
+                                                <select type="text" className="form-control SearchCustom" name="gender" onChange={this.onChange} disabled={role==1?false:true}>
                                                     <option value="0" selected={gender == 0}>Chưa xác định</option>
                                                     <option value="1" selected={gender == 1}>Nam</option>
                                                     <option value="2" selected={gender == 2}>Nữ</option>
                                                 </select>
-                                                {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="20" style={{width: "375px;"}}>
-                                                    <span className="selection"><span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" 
-                                                    tabIndex="0" aria-disabled="false" aria-labelledby="select2-jobGender-container"><span className="select2-selection__rendered" id="select2-jobGender-container" 
-                                                    role="textbox" aria-readonly="true" title="Chọn giới tính">Chọn giới tính</span><span className="select2-selection__arrow" role="presentation">
-                                                        <b role="presentation"></b></span></span></span><span className="dropdown-wrapper" aria-hidden="true"></span>
-                                                </span> */}
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Ngày sinh</label>
                                             <div className="col-sm-9">
-                                                <input type="text" className="form-control SearchCustom" placeholder="dd/mm/yyyy" value={birthDay} name="birthDay" onChange={this.onChange}/>
+                                                <input disabled={role==1?false:true} type="text" className="form-control SearchCustom" placeholder="dd/mm/yyyy" value={birthDay} name="birthDay" onChange={this.onChange}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Hôn nhân<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                            <select type="text" className="form-control SearchCustom" name="married" onChange={this.onChange}>
+                                            <select disabled={role==1?false:true} type="text" className="form-control SearchCustom" name="married" onChange={this.onChange}>
                                                 <option value="0" selected={married == 0}>Độc thân</option>
                                                 <option value="1" selected={married == 1}>Đã kết hôn</option>
                                             </select>
-                                            {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="205" style={{width: "375px;"}}><span className="selection"><span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabIndex="0" aria-disabled="false" aria-labelledby="select2-empStatus-container"><span className="select2-selection__rendered" id="select2-empStatus-container" role="textbox" aria-readonly="true" title="Chọn tình trạng hôn nhân">Chọn tình trạng hôn nhân</span><span className="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span className="dropdown-wrapper" aria-hidden="true"></span></span> */}
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Tỉnh/ Thành phố<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                            <select type="text" className="form-control SearchCustom" name="province" onChange={this.getProvince} >
+                                            <select disabled={role==1?false:true} type="text" className="form-control SearchCustom" name="province" onChange={this.getProvince} >
                                                 <option  value="" selected={infperson.provinceCode == null}></option>
 
                                                 {this.ShowListProvince(lstprovince,infperson)}
                                             </select>
-                                            {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="24" style={{width: "375px;"}}>
-                                                <span className="selection">
-                                                    <span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabIndex="0" aria-disabled="false" aria-labelledby="select2-jobProvince2-container">
-                                                        <span className="select2-selection__rendered" id="select2-jobProvince2-container" role="textbox" aria-readonly="true" title="Hồ Chí Minh">Hồ Chí Minh</span>
-                                                        <span className="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span className="dropdown-wrapper" aria-hidden="true"></span>
-                                                        </span> */}
                                             </div>
                                         </div>
 
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Quận/huyện<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                            <select type="text" className="form-control SearchCustom" name="district" onChange={this.getDistrict} >
+                                            <select disabled={role==1?false:true} type="text" className="form-control SearchCustom" name="district" onChange={this.getDistrict} >
                                             <option  value="" selected={infperson.districtCode == null}></option>
 
                                                 {this.ShowListDistrict(lstdictrict,infperson)}
@@ -647,7 +643,7 @@ class Myprofile extends Component{
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Xã/phường<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                            <select type="text" className="form-control SearchCustom" name="ward" onChange={this.getWard}>
+                                            <select disabled={role==1?false:true} type="text" className="form-control SearchCustom" name="ward" onChange={this.getWard}>
                                             <option  value="" selected={infperson.wardCode == null}></option>
 
                                             {this.ShowListWard(lstward,infperson)}
@@ -660,7 +656,7 @@ class Myprofile extends Component{
                                         <div className="form-group row">
                                             <label className="col-sm-3 col-form-label text-right label">Chỗ ở hiện tại<span style={{color: "red"}} className="pl-2">*</span></label>
                                             <div className="col-sm-9">
-                                                <textarea type="text"  className="form-control SearchCustom" placeholder="Số nhà, tên đường" value={streetName} name="streetName" onChange={this.onChange}> 
+                                                <textarea disabled={role==1?false:true} type="text"  className="form-control SearchCustom" placeholder="Số nhà, tên đường" value={streetName} name="streetName" onChange={this.onChange}> 
                                                 </textarea>
                                             </div>
                                         </div>
@@ -684,11 +680,20 @@ class Myprofile extends Component{
                                      <div id="collapseTwo" className="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                         <div className="card-body recuitment-body">
                                         <div className="form-group row">
-                                            <label className="col-sm-3 col-form-label text-right label">Chọn hồ sơ đính kèm<span style={{color: "red"}} className="pl-2">*</span></label>
+                                            {
+                                                role==1 &&  <label className="col-sm-3 col-form-label text-right label">Chọn hồ sơ đính kèm<span style={{color: "red"}} className="pl-2">*</span></label>
+
+                                            }
                                             <div className="col-sm-9">
-                                            <input type="file" id="file" className="recuitment-card-acttachment" onChange={this.onFileChange}/>
-                                            <label htmlFor="file" className="btn-1"><i className="fa fa-paperclip pr-2"></i>Chọn file</label>
-                                           
+                                            {
+                                                role ==1 &&
+                                                <input type="file" id="file" className="recuitment-card-acttachment" onChange={this.onFileChange}/>                                               
+                                            }
+                                           {
+                                               role ==1 && 
+                                               <label htmlFor="file" className="btn-1"><i className="fa fa-paperclip pr-2"></i>Chọn file</label>
+
+                                           }
                                             <p className="output-file">
                                                 <span id="previewFileName">{filename}</span>
                                                 {
@@ -720,7 +725,7 @@ class Myprofile extends Component{
                                             <div className="form-group row">
                                                 <label className="col-sm-3 col-form-label text-right label">Tiêu đề hồ sơ<span style={{color: "red"}} className="pl-2">*</span></label>
                                                 <div className="col-sm-9">
-                                                    <input type="text" className="form-control SearchCustom" placeholder="Nhập tiêu đề" value={titleDoc} name="titleDoc" onChange={this.onChange}/>
+                                                    <input disabled={role==1?false:true} type="text" className="form-control SearchCustom" placeholder="Nhập tiêu đề" value={titleDoc} name="titleDoc" onChange={this.onChange}/>
                                                 </div>
                                             </div>
                                     
@@ -729,7 +734,7 @@ class Myprofile extends Component{
                                                      <span style={{color: "red"}} className="pl-2">*</span>
                                                 </label>
                                                 <div className="col-sm-9">
-                                                    <textarea type="text"  className="form-control SearchCustom" placeholder="Giới thiệu bản thân" value={introduceYourself} name="introduceYourself" onChange={this.onChange}>
+                                                    <textarea disabled={role==1?false:true} type="text"  className="form-control SearchCustom" placeholder="Giới thiệu bản thân" value={introduceYourself} name="introduceYourself" onChange={this.onChange}>
                                                     </textarea>
                                                 </div>
                                             </div>
@@ -737,7 +742,7 @@ class Myprofile extends Component{
                                             <div className="form-group row">
                                                 <label className="col-sm-3 col-form-label text-right label">Trình độ<span style={{color: "red"}} className="pl-2">*</span></label>
                                                 <div className="col-sm-9">
-                                                    <select type="text" className="form-control SearchCustom" name="level" onChange={this.onChange}>
+                                                    <select disabled={role==1?false:true} type="text" className="form-control SearchCustom" name="level" onChange={this.onChange}>
                                                         <option selected="selected" value="" data-select2-id="2">Chọn trình độ</option>
                                                         <option value="7" selected={level == 7}>Cao học</option>
                                                         <option value="6" selected={level == 6}>Đại học</option>
@@ -747,15 +752,6 @@ class Myprofile extends Component{
                                                         <option value="2" selected={level == 2}>Chứng chỉ</option>
                                                         <option value="1" selected={level == 1}>Lao động phổ thông</option>
                                                     </select>
-                                                    {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="1" style={{width: "510px;"}}>
-                                                        <span className="selection">
-                                                            <span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" 
-                                                                     aria-expanded="false" tabIndex="0" aria-disabled="false" aria-labelledby="select2-jobLevel-container">
-                                                                <span className="select2-selection__rendered" id="select2-jobLevel-container" role="textbox" aria-readonly="true" 
-                                                                      title="Chọn trình độ">Chọn trình độ</span><span className="select2-selection__arrow" role="presentation">
-                                                                    <b role="presentation"></b></span></span></span><span className="dropdown-wrapper" aria-hidden="true">
-                                                                </span>
-                                                        </span> */}
                                                 </div>
                                             </div>
 
@@ -763,14 +759,14 @@ class Myprofile extends Component{
                                             <div className="form-group row">
                                                 <label className="col-sm-3 col-form-label text-right label">Nơi đào tạo<span style={{color: "red"}} className="pl-2">*</span></label>
                                                 <div className="col-sm-9">
-                                                    <input type="text" className="form-control SearchCustom" placeholder="Nhập tên trường/nơi đào tạo" value={school} name="school" onChange={this.onChange}/>
+                                                    <input disabled={role==1?false:true} type="text" className="form-control SearchCustom" placeholder="Nhập tên trường/nơi đào tạo" value={school} name="school" onChange={this.onChange}/>
                                                 </div>
                                             </div>
 
                                             <div className="form-group row">
                                                 <label className="col-sm-3 col-form-label text-right label">Đã tốt nghiệp<span style={{color: "red"}} className="pl-2">*</span></label>
                                                 <div className="col-sm-9">
-                                                    <input type="checkbox" className="SearchCustom CheckboxCustom" placeholder="Đã tốt nghiệp" checked={checked} name="graduated" onChange={this.onChange}/>
+                                                    <input disabled={role==1?false:true} type="checkbox" className="SearchCustom CheckboxCustom" placeholder="Đã tốt nghiệp" checked={checked} name="graduated" onChange={this.onChange}/>
                                                 </div>
                                             </div>
                                             
@@ -779,27 +775,13 @@ class Myprofile extends Component{
                                                      <span style={{color: "red"}} className="pl-2">*</span>
                                                 </label>
                                                 <div className="col-sm-9">
-                                                <select type="text"  className="form-control SearchCustom" name="exp" onChange={this.onChange}>
+                                                <select disabled={role==1?false:true} type="text"  className="form-control SearchCustom" name="exp" onChange={this.onChange}>
                                                     <option value="0"  selected={exp == 0}>Chưa có kinh nghiệm</option>
                                                     <option value="1"  selected={exp == 1}>Dưới 1 năm</option>
                                                     <option value="2"  selected={exp == 2}>1-2 năm</option>
                                                     <option value="3"  selected={exp == 3}>2-3 năm</option>
                                                     <option value="4"  selected={exp == 4}>Trên 3 năm</option>
                                                 </select>
-                                                    {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="10" style={{width: "510px;"}}>
-                                                        <span className="selection">
-                                                            <span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" 
-                                                                aria-expanded="false" tabIndex="0" aria-disabled="false" aria-labelledby="select2-jobExperience-container">
-                                                                <span className="select2-selection__rendered" id="select2-jobExperience-container" role="textbox" aria-readonly="true" 
-                                                                        title="Chọn kinh nghiệm">Chọn kinh nghiệm
-                                                                </span>
-                                                                <span className="select2-selection__arrow" role="presentation">
-                                                                    <b role="presentation"></b>
-                                                                </span>
-                                                            </span>
-                                                        </span>
-                                                        <span className="dropdown-wrapper" aria-hidden="true"></span>
-                                                    </span> */}
                                                 </div>
                                             </div>
 
@@ -808,37 +790,22 @@ class Myprofile extends Component{
                                                      <span style={{color: "red"}} className="pl-2">*</span>
                                                 </label>
                                                 <div className="col-sm-9">
-                                                <textarea type="text"  className="form-control SearchCustom" placeholder="Mô tả quá trình làm việc" value={workProgress} name="workProgress" onChange={this.onChange}>
+                                                <textarea disabled={role==1?false:true} type="text"  className="form-control SearchCustom" placeholder="Mô tả quá trình làm việc" value={workProgress} name="workProgress" onChange={this.onChange}>
                                                 </textarea>
-                                                    {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="10" style={{width: "510px;"}}>
-                                                        <span className="selection">
-                                                            <span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" 
-                                                                aria-expanded="false" tabIndex="0" aria-disabled="false" aria-labelledby="select2-jobExperience-container">
-                                                                <span className="select2-selection__rendered" id="select2-jobExperience-container" role="textbox" aria-readonly="true" 
-                                                                        title="Chọn kinh nghiệm">Chọn kinh nghiệm
-                                                                </span>
-                                                                <span className="select2-selection__arrow" role="presentation">
-                                                                    <b role="presentation"></b>
-                                                                </span>
-                                                            </span>
-                                                        </span>
-                                                        <span className="dropdown-wrapper" aria-hidden="true"></span>
-                                                    </span> */}
                                                 </div>
                                             </div>
 
                                             <div className="form-group row">
                                                 <label className="col-sm-3 col-form-label text-right label">Kỹ năng chuyên môn<span style={{color: "red"}} className="pl-2">*</span></label>
                                                 <div className="col-sm-9">
-                                                     <textarea type="text"  className="form-control SearchCustom" placeholder="Kỹ năng làm việc" value={skill} name="skill" onChange={this.onChange}>
+                                                     <textarea  disabled={role==1?false:true} type="text"  className="form-control SearchCustom" placeholder="Kỹ năng làm việc" value={skill} name="skill" onChange={this.onChange}>
                                                     </textarea>
-                                                   {/* <span className="select2 select2-container select2-container--default" dir="ltr" data-select2-id="209" style={{width: "510px;"}}><span className="selection"><span className="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabIndex="0" aria-disabled="false" aria-labelledby="select2-empLevel-container"><span className="select2-selection__rendered" id="select2-empLevel-container" role="textbox" aria-readonly="true" title="Chọn cấp bậc">Chọn cấp bậc</span><span className="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span className="dropdown-wrapper" aria-hidden="true"></span></span> */}
                                                 </div>
                                             </div>
                                             <div className="form-group row">
                                                     <label className="col-sm-3 col-form-label text-right label">Ky năng khác<span style={{color: "red"}} className="pl-2">*</span></label>
                                                     <div className="col-sm-9">
-                                                        <textarea type="text"  className="form-control SearchCustom" placeholder="Kỹ năng làm việc khác" value={skillOther} name="skillOther" onChange={this.onChange}>
+                                                        <textarea disabled={role==1?false:true} type="text"  className="form-control SearchCustom" placeholder="Kỹ năng làm việc khác" value={skillOther} name="skillOther" onChange={this.onChange}>
                                                         </textarea>
                                                     </div>
                                                 </div>
@@ -848,122 +815,49 @@ class Myprofile extends Component{
                                 </div>
                                 {/* sai ngay đây */}
                         
-
-                                <div className="rec-submit">
-                                    <button type="button" className="btn-submit-recuitment mb-3 ml-3" name="" onClick={()=>this.onSave()}>
-                                         <i className="fa fa-floppy-o pr-2"></i>Lưu Hồ Sơ
+                                {role ==1 && 
+                                 <div className="rec-submit">
+                                    <button  type="button" className="btn-submit-recuitment mb-3 ml-3" name="" onClick={()=>this.onSave()}>
+                                        <i className="fa fa-floppy-o pr-2"></i>Lưu Hồ Sơ
                                     </button>
                                 </div>
+                                }
+                               
                             </form>
                         </div>
-                        <div className="col-md-4 col-sm-12 col-12">
-                            <div className="recuiter-info">
-                            <div className="recuiter-info-avt">
-                                <img src={`data:image/png;base64,${avatar}`} />
-                            </div>
-                            <div className="clearfix list-rec">
-                                <h4>{fullname}</h4>
-                                <ul>
-                                <li><a href="#">Việc làm yêu thích<strong>(0)</strong></a></li>
-                                <li><a href="#">Việc làm đã nộp <strong>(0)</strong></a></li>
-                                </ul>
-                            </div>
-                            </div>
-
-
-                        <div className="block-sidebar" style={{marginBottom: "20px;"}}>
-                            <header>
-                                <h3 className="title-sidebar font-roboto bg-primary">
-                                    Trung tâm quản lý
-                                </h3>
-                            </header>
-                            <div className="job-sidebar">
-                                <div className="sb-banner">
-                                       <img src="img/img1.png" className="advertisement" alt="" />
-                                </div>
-                             </div>
-                            {/* <div className="content-sidebar menu-trung-tam-ql menu-ql-employer">
-                                <h3 className="menu-ql-ntv">
-                                    Hồ sơ của bạn
-                                </h3>
-                                <ul>
-                                    <li>
-                                        <a href="#">
-                                        Quản lý Tài khoản
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                        Quản lý hồ sơ
-                                        </a>
-                                    </li>
-                                </ul>
-                                <h3 className="menu-ql-ntv">
-                                    Việc làm của bạn
-                                </h3>
-                                <ul>
-                                    <li>
-                                        <a href="#">
-                                        Việc làm đã lưu
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank">
-                                        Việc làm dã ứng tuyển
-                                        </a>
-                                    </li>
-                                </ul>
-                                <h3 className="menu-ql-ntv">
-                                    Hỗ trợ và thông báo
-                                </h3>
-                                <ul>
-                                    <li>
-                                        <a href="#" title="Gửi yêu cầu đến ban quản trị">
-                                        Gửi yêu cầu đến ban quản trị
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" title="Ban quản trị thông báo">
-                                        Ban quản trị thông báo
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" title="Hướng dẫn thao tác">
-                                        Hướng dẫn thao tác
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank">
-                                        <span>Thông tin thanh toán</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a target="_blank" href="#">
-                                        <span>Cổng tra cứu lương</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a target="_blank" href="#">
-                                        <span> Cẩm nang tuyển dụng</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                                <ul>
-                                    <li className="logout">
-                                        <a href="#" title="Đăng xuất">
-                                        Đăng xuất
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div> */}
+                      
+                            {role ==1 &&
+                                   <div className="col-md-4 col-sm-12 col-12">
+                                   <div className="recuiter-info">
+                                       <div className="recuiter-info-avt">
+                                           <img src={`data:image/png;base64,${avatar}`} />
+                                       </div>
+                                       <div className="clearfix list-rec">
+                                           <h4>{fullname}</h4>
+                                           <ul>
+                                           <li><a href="#">Việc làm yêu thích<strong>(0)</strong></a></li>
+                                           <li><a href="#">Việc làm đã nộp <strong>(0)</strong></a></li>
+                                           </ul>
+                                       </div>
+                                   </div>
+                                   <div className="block-sidebar" style={{marginBottom: "20px;"}}>
+                                       <header>
+                                           <h3 className="title-sidebar font-roboto bg-primary">
+                                               Trung tâm quản lý
+                                           </h3>
+                                       </header>
+                                       <div className="job-sidebar">
+                                           <div className="sb-banner">
+                                               <img src="img/img1.png" className="advertisement" alt="" />
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                            }
+                         
                         </div>
                     </div>
-                    </div>
-                    </div>
                 </div>
-
-
-
             </div>
         );
     }

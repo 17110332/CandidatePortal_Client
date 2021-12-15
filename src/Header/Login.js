@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import axios from 'axios';
+import Listconst from './../Const/Listconst';
+import { ToastContainer,toast } from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css';  
+
+const APIstr = Listconst.API;
 
 class Login extends Component{
     constructor(props){
@@ -12,11 +18,18 @@ class Login extends Component{
     componentDidMount()
     {
         let tokenlogin = localStorage.getItem("TokenLogin");
-        let fullnameencode=tokenlogin ? base64_decode(tokenlogin).split("___+=()*")[0] : ""
-        let fullname = fullnameencode ? fullnameencode.split("FFF"):"";
-        console.log("aaa",fullname)
-        this.setState({
-            FullName:fullname && fullname.length > 0 ?fullname[0] +" "+fullname[1] :""
+        let fullnameencode=tokenlogin ? base64_decode(tokenlogin).split("___+=()*")[0] : "";
+
+        axios.get(APIstr +`api/AccountAction/GetFullName/${fullnameencode}`)
+        .then(res=>{
+              console.log("res",res)
+              this.setState({
+                FullName:res && res.data ? res.data :""
+            })
+        })
+        .catch(err=>{
+            toast.error(err);
+            return
         })
     }
     OnLogOut = ()=>
