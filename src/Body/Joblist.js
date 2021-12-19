@@ -5,6 +5,7 @@ import Listconst from './../Const/Listconst';
 import Jobitem from './Jobitem';
 import Loading from "./Loading"
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import Jobnewest from './Jobnewest';
 const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
 const applicantcode= tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 class Joblist extends Component{ 
@@ -112,7 +113,8 @@ class Joblist extends Component{
                     :
                     <Loading />
                 }
-                
+                <div className="clearfix"></div>
+                <Jobnewest />
             </div>
         )
     }
