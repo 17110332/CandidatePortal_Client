@@ -1,0 +1,18 @@
+.heartCustom{
+    font-size: 25px;
+    margin-left: 30px;
+    transition: transform .2s; /* Animation */
+}
+.heartCustom:hover{
+    cursor: pointer;
+    transform: scale(1.5);
+}
+
+.heartCustomLike{
+    color: red;
+}
+#btnapply{
+    background-color:#4CAF50;
+    border-radius: 15px;
+    font-weight: bold;
+}

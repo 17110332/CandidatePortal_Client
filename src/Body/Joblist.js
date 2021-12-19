@@ -4,6 +4,9 @@ import Search from './Search';
 import Listconst from './../Const/Listconst';
 import Jobitem from './Jobitem';
 import Loading from "./Loading"
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
+const applicantcode= tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 class Joblist extends Component{ 
     constructor(props)
     {
@@ -29,6 +32,7 @@ class Joblist extends Component{
         Params.set('activePage',activePage);
         Params.set('PageSize',PageSize);
         Params.set('TotalPage',TotalPage);
+        Params.set('ApplicantCode',applicantcode);
         this.setState({loading:true},()=>{
             axios.post(APIstr +`api/Home/GetJobRecruits/${condition}`,Params)
             .then(res=>{
@@ -64,7 +68,7 @@ class Joblist extends Component{
     onLoadDataPaging =(pageIndex)=>{
         let Params = new FormData();
         Params.set('pageindex',pageIndex);
-
+        Params.set('ApplicantCode',applicantcode);
         const APIstr = Listconst.API;
         let condition="NULL";
         this.setState({loading:true},()=>{
@@ -101,6 +105,7 @@ class Joblist extends Component{
                             PageSize={PageSize}
                             TotalPage={TotalPage}
                             PageIndex={PageIndex}
+                            ApplicantCode={applicantcode}
                             />
                             </div>
                         </div>

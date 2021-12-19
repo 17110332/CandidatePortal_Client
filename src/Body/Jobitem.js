@@ -1,6 +1,17 @@
 import React , {Component }from 'react';
 import {Link} from "react-router-dom";
 import Pagination from "react-js-pagination";
+import axios from 'axios';
+import Listconst from './../Const/Listconst';
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import './Jobitem.css';
+import {toast } from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css';  
+import swal from 'sweetalert2';
+const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
+const applicantcode= tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
+const APIstr = Listconst.API;
+const sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
 
 class Jobitem extends Component{ 
 
@@ -18,12 +29,117 @@ class Jobitem extends Component{
     {
         this.props._onLoadDataPaging(pageNumber)
     }
+    onApply = (recruitID)=>{
+        axios.get(APIstr + `api/Applicant/GetApplicantByUserName/${sessionlogin}`)
+        .then(r=>{
+            let info = r && r.data.length >0 ? r.data[0] : {};
+            console.log("info",info)
+            swal.fire({
+                title: 'Chọn phương thức ứng tuyển',
+                input: 'radio',
+                inputOptions: {
+                  '1': 'Ứng tuyển với hồ sơ trực tuyến',
+                  '2': 'Đính kèm tệp CV'
+                },
+              
+                // validator is optional
+                inputValidator: function(res) {
+                  if (!res) {
+                    return 'Vui lòng chọn 1 phương thức ứng tuyển!';
+                  }
+                }
+              }).then(function(res) {
+                    if(res.value ==1) // hồ sơ trực tuyến
+                    {
+                        if(!info.birthDay || !info.districtCode || !info.email || !info.exp || !info.firstName || !info.gender
+                            || !info.graduated || !info.introduceYourself || !info.lastName || !info.level || !info.married || !info.mobile
+                            || !info.provinceCode || !info.school || !info.skill || !info.skillOther || !info.streetName || !info.titleDoc || !info.wardCode || !info.workProgress)
+                        {
+                            toast.warning("Vui lòng điền đủ thông tin cá nhân tại trang cá nhân!");
+                            return;
+                        }
+                    }
+                    else // file đính kèm
+                    {
+                        if(!info.cvApplicant)
+                        {
+                            toast.warning("Vui lòng đính kèm tệp CV tại trang cá nhân!");
+                            return
+                        }
+                    }
+                    //gọi api insert db => thông báo nếu ko lỗi hoặc vướng validate
+                    let Params = new FormData();
+                    Params.set('ApplicantCode',applicantcode);
+                    Params.set('RecruitID',recruitID);
+                    axios.post(APIstr +"api/Home/onApply",Params)
+                    .then(res=>{
+                        console.log("resss",res);
+                        if(res && res.data && res.data.error)
+                        {
+                            toast.error(res.data.error);
+                            return;
+                        }
+                        swal.fire('Ứng tuyển thành công!','Vui lòng đợi nhân sự liên hệ!', 'success')
+                    })
+                    .catch(err=>{
+                        toast.error("API unsuccess");
+                        return
+                    })
+                   
+              })
+        })
+        .catch(err=>{
+
+        })
+      
+    }
+    onLike =(idheart,recruitID)=>{
+        console.log(idheart,recruitID)
+        let Params = new FormData();
+        Params.set('ApplicantCode',applicantcode);
+        Params.set('RecruitID',recruitID);
+        let element  = document.getElementById(idheart);
+        let hasClassUnLike = element.classList.contains("fa-heart-o");
+        axios.post(APIstr +"api/Home/onLike",Params)
+        .then(res=>{
+            if(res && res.data)
+            {
+                if(res.data.type=="insert")
+                {
+                    if(hasClassUnLike)
+                    {
+                        element.classList.remove("fa-heart-o");
+                        element.classList.add("fa-heart");
+                        element.classList.add("heartCustomLike");
+                    }
+                    toast.success("Đã thích!");
+                }
+                else
+                {   if(!hasClassUnLike)
+                    {
+                        element.classList.remove("fa-heart");
+                        element.classList.remove("heartCustomLike");
+                        element.classList.add("fa-heart-o");
+                    }
+                    toast.warn("Đã bỏ thích!");
+                }
+            }
+            else
+            {
+                toast.warn("API unsuccess!");
+            }
+        })
+        .catch(err=>{
+            toast.warn("API Error!");
+        })
+    }
     ShowJobs = (lstJob)=>{
         var result = null;
         if(lstJob.length > 0)
         {
             console.log("lstJob",lstJob)
              result=lstJob.map((item, index)=>{
+                    let idheart = "heart_"+index;
                     return (
                              <div className="job pagi" key={index}>
                                 <div className="job-content">
@@ -56,10 +172,16 @@ class Jobitem extends Component{
                                             <div className="job-deadline">
                                                 <span><i className="fa fa-clock-o" aria-hidden="true"></i>  Hạn nộp: <strong>{item.toDate}</strong></span>
                                             </div>
+                                            {
+                                                item.liked==1 ?  <span><i id={idheart} className="fa fa-heart heartCustom heartCustomLike"  onClick={()=>this.onLike(idheart,item.recruitID)}></i></span>
+                                                :
+                                                <span><i id={idheart} className="fa fa-heart-o heartCustom" onClick={()=>this.onLike(idheart,item.recruitID)}></i></span>
+                                            }
+                                           
                                         </div>
                                     </div>
                                     <div className="wrap-btn-appl" style={{marginTop:"-80px"}}>
-                                        <a href="#" className="btn btn-appl">Ứng tuyển</a>
+                                        <button id="btnapply" className="btn btn-appl" onClick={()=>this.onApply(item.recruitID)}>Ứng tuyển</button>
                                     </div>
                                 </div>
                             </div>
