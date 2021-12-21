@@ -66,6 +66,9 @@ class Login extends Component{
 
                                         </li>
                                         <li className="nav-item">
+                                            <Link className="nav-link" to="/QuyTrinhTuyenDung">Quy trình tuyển dụng</Link>
+                                        </li>
+                                        <li className="nav-item">
                                             <a className="nav-link" href="index.html">Tin Tức</a>
                                         </li>
                                         {/* <li className="nav-item dropdown">

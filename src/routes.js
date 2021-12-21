@@ -4,6 +4,7 @@ import Notfound from "./Body/Notfound";
 import Jobdetail from "./Body/Jobdetail";
 import Login from "./Body/Login";
 import Register from "./Body/Register";
+import QuyTrinhTuyenDung from "./Body/QuyTrinhTuyenDung";
 import Myprofile from "./Profile/Myprofile";
 const routes = [
     {
@@ -30,6 +31,11 @@ const routes = [
         path: "/Myprofile",
         exact: false,
         main: ()=><Myprofile />
+    },
+    {
+        path: "/QuyTrinhTuyenDung",
+        exact: false,
+        main: ()=><QuyTrinhTuyenDung />
     },
     {
         path: "",

@@ -1,0 +1,24 @@
+/* .img1{
+    background-image: url("./imgbackground/news1.jpg"); 
+}
+.img2{
+    background-image: url("./imgbackground/news2.jpg");
+}
+.img3{
+    background-image: url("./imgbackground/news3.png");
+} */
+
+.news-item-inner{
+    font-size: 19px;
+    font-weight: bold;
+}
+.daingo{
+    color: red;
+}
+.imgbenefit{
+    height: 221px;
+    width: 541px;
+}
+.news-wrapper-head{
+    font-weight: bold;
+}

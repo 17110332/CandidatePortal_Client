@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Listconst from './../Const/Listconst';
 import { Link } from "react-router-dom";
+
 const APIstr = Listconst.API;
 class Jobnewest extends Component {
     constructor(props) {
@@ -11,6 +12,12 @@ class Jobnewest extends Component {
         }
     }
     componentDidMount() {
+        //nhúng js vào
+        const script = document.createElement("script");
+        script.src = "./js/owlcarousel/owl.carouselrun.js";
+        script.async = true;
+        document.body.appendChild(script);
+
         axios.get(APIstr + "api/Home/GetTop18JobRecruit")
             .then(res => {
                 console.log("top 18", res)

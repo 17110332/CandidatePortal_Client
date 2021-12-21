@@ -2770,5 +2770,13 @@ ul.navbar-nav.nav-recuitment-li li a {
     color: #fff!important;
     font-size: 15px;
 }
-
+.img1{
+    background-image: url("./../img/news1.jpg"); 
+}
+.img2{
+    background-image: url("./../img/news2.jpg");
+}
+.img3{
+    background-image: url("./../img/news3.png");
+}
 /*(end)Recuitment nav*/

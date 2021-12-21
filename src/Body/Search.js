@@ -60,7 +60,7 @@ class Search extends Component{
         {
           result=ListLocation.map((item, index)=>{
             return (          
-                    <option key={index} value={item.provinceCode}>{item.provinceName}</option>
+                    <option className='textformat' key={index} value={item.provinceCode}>{item.provinceName}</option>
             )
           });
         }
@@ -73,7 +73,7 @@ class Search extends Component{
         {
           result=ListTypeJobW.map((item, index)=>{
             return (          
-                    <option key={index} value={item.typeJobWCode}>{item.typeJobWName}</option>
+                    <option className='textformat' key={index} value={item.typeJobWCode}>{item.typeJobWName}</option>
             )
           });
         }
@@ -85,7 +85,7 @@ class Search extends Component{
         {
           result=ListJobW.map((item, index)=>{
             return (          
-                    <option key={index} value={item.jobWCode}>{item.jobWName}</option>
+                    <option className='textformat' key={index} value={item.jobWCode}>{item.jobWName}</option>
             )
           });
         }
@@ -203,8 +203,6 @@ class Search extends Component{
                         </div> */}
                     </div>
                 </div>
-    
-    
                 <div className="container-fluid search-fluid">
                     <div className="container">
                         <div className="search-wrapper"  style={{marginTop:'-11rem;'}}>
@@ -226,30 +224,30 @@ class Search extends Component{
                                 <div className="row">
 
                                 <div className="col-md-4">
-                                        <select name="TypeJobWSelected"  className="SearchCustom" 
+                                        <select name="TypeJobWSelected"  className="SearchCustom textformat" 
                                         required onChange={this.GetSelectLocation}>
-                                            <option value="all">Tất cả địa điểm</option>
+                                            <option value="all" className='textformat'>Tất cả địa điểm</option>
                                             {this.ShowListLocation(ListLocation)}
                                         </select>
                                     </div>
                                     
                                     <div className="col-md-4">
-                                        <select name="TypeJobWSelected"  className="SearchCustom" 
+                                        <select name="TypeJobWSelected"  className="SearchCustom textformat" 
                                         required onChange={this.GetSelectTypeJobW}>
-                                            <option value="all">Tất cả chuyên ngành</option>
+                                            <option value="all" className='textformat'>Tất cả chuyên ngành</option>
                                             {this.ShowListTypeJobW(ListTypeJobW)}
                                         </select>
                                     </div>
                                     <div className="col-md-4">
-                                        <select className="SearchCustom" required onChange={this.GetSelectJobW}>
-                                            <option value="all">Tất cả chuyên môn</option>
+                                        <select className="SearchCustom textformat" required onChange={this.GetSelectJobW}>
+                                            <option value="all" className='textformat'>Tất cả chuyên môn</option>
                                            {this.ShowListJobW(ListJobW)}
                                         </select>
                                     </div>
                                 </div>
                                 </div>
                                 <div className="col-md-2 col-sm-12">
-                                   <button  type="button" className="btn btn-primary btn-search col-sm-12"
+                                   <button  type="button" className="btn btn-primary btn-search col-sm-12 textformat"
                                         onClick={this.OnSearch}>Tìm kiếm</button>
                                 </div>
                             </div>
@@ -275,6 +273,19 @@ class Search extends Component{
                         </div>
                     </div>
                     </div>
+                    <div class="container-fluid">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="home-ads">
+                                    <a href="#">
+                                        <img src="img/hna2.jpg"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }

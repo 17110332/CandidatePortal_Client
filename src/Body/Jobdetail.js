@@ -3,8 +3,15 @@ import axios from 'axios';
 import Listconst from './../Const/Listconst';
 import {Link} from "react-router-dom";
 import Loading from "./Loading"
-
+import {toast } from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css';  
+import swal from 'sweetalert2';
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
+const applicantcode= tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
+const sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
+
 class Jobdetail extends Component{
 
     constructor(props)
@@ -135,6 +142,70 @@ class Jobdetail extends Component{
         }
         return result;
     }
+    onApply = (recruitID)=>{
+        axios.get(APIstr + `api/Applicant/GetApplicantByUserName/${sessionlogin}`)
+        .then(r=>{
+            let info = r && r.data.length >0 ? r.data[0] : {};
+            console.log("info",info)
+            swal.fire({
+                title: 'Chọn phương thức ứng tuyển',
+                input: 'radio',
+                inputOptions: {
+                  '1': 'Ứng tuyển với hồ sơ trực tuyến',
+                  '2': 'Đính kèm tệp CV'
+                },
+              
+                // validator is optional
+                inputValidator: function(res) {
+                  if (!res) {
+                    return 'Vui lòng chọn 1 phương thức ứng tuyển!';
+                  }
+                }
+              }).then(function(res) {
+                    if(res.value ==1) // hồ sơ trực tuyến
+                    {
+                        if(!info.birthDay || !info.districtCode || !info.email || !info.exp || !info.firstName || !info.gender
+                            || !info.graduated || !info.introduceYourself || !info.lastName || !info.level || !info.married || !info.mobile
+                            || !info.provinceCode || !info.school || !info.skill || !info.skillOther || !info.streetName || !info.titleDoc || !info.wardCode || !info.workProgress)
+                        {
+                            toast.warning("Vui lòng điền đủ thông tin cá nhân tại trang cá nhân!");
+                            return;
+                        }
+                    }
+                    else // file đính kèm
+                    {
+                        if(!info.cvApplicant)
+                        {
+                            toast.warning("Vui lòng đính kèm tệp CV tại trang cá nhân!");
+                            return
+                        }
+                    }
+                    //gọi api insert db => thông báo nếu ko lỗi hoặc vướng validate
+                    let Params = new FormData();
+                    Params.set('ApplicantCode',applicantcode);
+                    Params.set('RecruitID',recruitID);
+                    axios.post(APIstr +"api/Home/onApply",Params)
+                    .then(res=>{
+                        console.log("resss",res);
+                        if(res && res.data && res.data.error)
+                        {
+                            toast.error(res.data.error);
+                            return;
+                        }
+                        swal.fire('Ứng tuyển thành công!','Vui lòng đợi nhân sự liên hệ!', 'success')
+                    })
+                    .catch(err=>{
+                        toast.error("API unsuccess");
+                        return
+                    })
+                   
+              })
+        })
+        .catch(err=>{
+
+        })
+      
+    }
     render()
     {
         let {JobDetail,Languages,Top5ListJobNew,loading} = this.state;
@@ -182,7 +253,7 @@ class Jobdetail extends Component{
                             <div className="col-md-3 col-sm-12 col-12">
                             <div className="jd-header-wrap-right">
                                 <div className="jd-center">
-                                <a  className="btn btn-primary btn-apply">Nộp đơn</a>
+                                <button onClick={()=>this.onApply(JobDetail.recruitID)} className="btn btn-primary btn-apply">Nộp đơn</button>
                                 <p className="jd-view">Lượt xem: <span>{JobDetail.view}</span></p>
                                 </div>
                             </div>
