@@ -57,6 +57,16 @@ class Login extends Component{
             return;
         })
     }
+    _handleKeyDown = (e) => { // xử lý khi nhấn enter
+    //  e.preventDefault();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+          setTimeout(() => {
+            this.onLogin();
+          }, 300);
+        
+      }
+    }
     render()
     {
       let{Password,Username} = this.state
@@ -74,14 +84,12 @@ class Login extends Component{
                   </div>
                   <div className="input-div one">
                     <div className="div lg-lable">
-                      <h5>Username</h5>
-                      <input type="text" className="input form-control-lgin"  name="Username" value={Username}  onChange={this.onChange} placeholder=''/>
+                      <input type="text" className="input form-control-lgin"  name="Username" value={Username} onKeyPress={this._handleKeyDown} onChange={this.onChange} placeholder='Tài khoản'/>
                     </div>
                   </div>
-                  <div className="input-div pass">
+                  <div className="input-div one">
                     <div className="div lg-lable">
-                      <h5>Password</h5>
-                      <input type="password" className="input form-control-lgin" name="Password" value={Password}  onChange={this.onChange} placeholder='' />
+                      <input type="password" className="input form-control-lgin" name="Password" value={Password} onKeyPress={this._handleKeyDown} onChange={this.onChange} placeholder='Mật khẩu' />
                     </div>
                   </div>
                   <div className="form-group d-block frm-text">

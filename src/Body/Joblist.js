@@ -9,7 +9,7 @@ import Jobnewest from './Jobnewest';
 import Review from './Review';
 import Benefit from './Benefit';
 const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
-const applicantcode= tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
+const applicantcode= tokenlogin !="" && tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 class Joblist extends Component{ 
     constructor(props)
     {

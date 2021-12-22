@@ -9,7 +9,7 @@ import {toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';  
 import swal from 'sweetalert2';
 const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
-const applicantcode= tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
+const applicantcode=tokenlogin !="" && tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
 const sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
 
@@ -93,6 +93,19 @@ class Jobitem extends Component{
         })
       
     }
+    Seemore=()=>{
+        debugger
+        let moreText = document.getElementsByClassName("readmorecontent")[0];
+        let btnText = document.getElementById("myBtn");
+
+        if (moreText.style.display == "none" || moreText.style.display == "") {
+            moreText.style.display = "inline";
+            btnText.innerHTML = "Thu gọn"; 
+        } else {
+            moreText.style.display = "none";
+            btnText.innerHTML = "Xem thêm"; 
+        }
+    }
     onLike =(idheart,recruitID)=>{
         console.log(idheart,recruitID)
         let Params = new FormData();
@@ -156,7 +169,7 @@ class Jobitem extends Component{
                                             {/* <a href="facebook.com">{item.jobWName}</a> */}
                                         </div>
                                         <div className="job-company">
-                                            <a href="facebook.com">{item.departmentName}</a> | <a href="facebook.com" className="job-address"><i className="fa fa-map-marker" aria-hidden="true"></i>
+                                            <a href="#">{item.departmentName}</a> | <a href="#" className="job-address"><i className="fa fa-map-marker" aria-hidden="true"></i>
                                                 {item.provinceName}</a>
                                         </div>
 
@@ -164,11 +177,20 @@ class Jobitem extends Component{
                                             <div className="job-main-skill">
                                                 <i className="fa fa-code" aria-hidden="true"></i>  <a href="#"> .NET</a>
                                             </div>
-                                            <div className="job-salary">
-                                                <i className="fa fa-money" aria-hidden="true"></i>
-                                                <span className="salary-min">{item.fromSalary}<em className="salary-unit"> VND</em></span>
-                                                <span className="salary-max">{item.toSalary}<em className="salary-unit"> VND</em></span>
-                                            </div>
+                                            {
+                                                item.isAgree ?
+                                                <div className="job-salary">
+                                                     <i className="fa fa-money" aria-hidden="true"></i>
+                                                     <span className="salary-min">Thỏa thuận<em className="salary-unit"></em></span>
+                                                </div>
+                                                :
+                                                <div className="job-salary">
+                                                    <i className="fa fa-money" aria-hidden="true"></i>
+                                                    <span className="salary-min">{item.fromSalary}<em className="salary-unit"> VND</em></span>
+                                                    <span className="salary-max">{item.toSalary}<em className="salary-unit"> VND</em></span>
+                                                </div>
+                                            }
+                                            
                                             <div className="job-deadline">
                                                 <span><i className="fa fa-clock-o" aria-hidden="true"></i>  Hạn nộp: <strong>{item.toDate}</strong></span>
                                             </div>
@@ -231,6 +253,55 @@ class Jobitem extends Component{
                             <div className="sb-banner">
                             <img src="img/img1.png" className="advertisement" alt="" />
                             </div>
+                    </div>
+                    <div className="job-sidebar">
+                    <div className="side-bar mb-3">
+                        <h2 className="widget-title">
+                            <span>Giới thiệu công ty</span>
+                        </h2>
+                        <div className="company-intro">
+                            <a>
+                            <img src="../img/hcmutelogo2.jpg" className="job-logo-ima" alt="job-logo" />
+                            </a>
+                        </div>
+                            <h2 className="company-intro-name">Đại học sư phạm kỹ thuật TPHCM</h2>
+                            <ul className="job-add">
+                                <li>
+                                    <i className="fa fa-map-marker ja-icn"></i>
+                                    <span>Trụ sở: 1 Võ Văn Ngân- Phường Linh Chiểu - TP Thủ Đức</span>
+                                </li>
+                                <li>
+                                    <i className="fa fa-bar-chart ja-icn"></i>
+                                    <span>Quy mô công ty: 100-500 người</span>
+                                </li>
+                            </ul>
+                            <ul className='job-add readmorecontent'>
+                            <li >
+                                    <i className="fa fa-map-marker ja-icn"></i>
+                                    <span>Điện thoại: 028 3722 1223</span>
+                                </li>
+                                <li>
+                                    <i className="fa fa-bar-chart ja-icn"></i>
+                                    <span>Ngày thành lập: 5 tháng 10, 1962</span>
+                                </li>
+                                <li>
+                                    <i className="fa fa-map-marker ja-icn"></i>
+                                    <span>Đại học công lập, tự chủ về tài chính</span>
+                                </li>
+                                <li>
+                                    <i className="fa fa-bar-chart ja-icn"></i>
+                                    <span>Khẩu hiệu: Nhân bản - Sáng tạo - Hội nhập</span>
+                                </li>
+                                <li>
+                                    <i className="fa fa-bar-chart ja-icn"></i>
+                                    <span>Tên khác: SPK (mã trường)</span>
+                                </li>
+                            </ul>
+
+                            <div className="wrap-comp-info mb-2">
+                            <button className="btn btn-primary btn-company" onClick={()=>this.Seemore()} id="myBtn">Xem thêm</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                     {/* <div className="col-md-4 col-sm-12 col-12 clear-left">

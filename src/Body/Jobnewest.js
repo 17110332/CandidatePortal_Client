@@ -38,17 +38,18 @@ class Jobnewest extends Component {
                         <div className="item job-latest-item">
                             <Link to={`/Jobdetail/${item.recruitID}`}  className="job-latest-group">
                                 <div className="job-lt-logo">
-                                    <img src="img/fpt-logo.png" />
+                                     <img src={"data:image/jpeg;base64," + item.photo}
+                                                 className="job-logo-ima" alt="job-logo"/>
                                 </div>
                             </Link>
                             <div className="job-lt-info">
                                 <Link to={`/Jobdetail/${item.recruitID}`} className="job-latest-group">
-                                    <h3>[HCM] 02 Solution Architects–Up to $2000 #1</h3>
+                                    <h3>{item.jobWName}</h3>
                                 </Link>
                                 <Link className="company" to={`/Jobdetail/${item.recruitID}`}>
-                                    FPT Software
+                                     {item.departmentName}
                                 </Link>
-                                <p className="address"><i className="fa fa-map-marker pr-1" aria-hidden="true"></i> Đà Nẵng</p>
+                                <p className="address"><i className="fa fa-map-marker pr-1" aria-hidden="true"></i>{item.provinceName}</p>
                             </div>
                         </div>
                     </div>

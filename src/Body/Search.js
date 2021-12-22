@@ -4,7 +4,7 @@ import axios from 'axios';
 import  './Search.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
-const applicantcode= tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
+const applicantcode=tokenlogin !="" &&  tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
 class Search extends Component{ 
     constructor(props)
