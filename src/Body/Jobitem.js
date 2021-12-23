@@ -30,6 +30,11 @@ class Jobitem extends Component{
         this.props._onLoadDataPaging(pageNumber)
     }
     onApply = (recruitID)=>{
+        if(applicantcode=='')
+        {
+            toast.error("Đăng nhập để thực hiện thao tác!");
+            return
+        }
         axios.get(APIstr + `api/Applicant/GetApplicantByUserName/${sessionlogin}`)
         .then(r=>{
             let info = r && r.data.length >0 ? r.data[0] : {};
@@ -107,6 +112,11 @@ class Jobitem extends Component{
         }
     }
     onLike =(idheart,recruitID)=>{
+        if(applicantcode=='')
+        {
+            toast.error("Đăng nhập để thực hiện thao tác!");
+            return
+        }
         console.log(idheart,recruitID)
         let Params = new FormData();
         Params.set('ApplicantCode',applicantcode);
