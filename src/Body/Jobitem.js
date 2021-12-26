@@ -99,7 +99,6 @@ class Jobitem extends Component{
       
     }
     Seemore=()=>{
-        debugger
         let moreText = document.getElementsByClassName("readmorecontent")[0];
         let btnText = document.getElementById("myBtn");
 

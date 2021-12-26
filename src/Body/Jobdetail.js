@@ -63,6 +63,7 @@ class Jobdetail extends Component{
                .catch(err=> {
                    console.log(err);
                })
+              
             }
             else
             {

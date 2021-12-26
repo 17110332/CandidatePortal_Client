@@ -11,3 +11,25 @@
   .btnExport:hover {
     background-color: RoyalBlue;
   }
+  .menu{
+    cursor: pointer;
+    /* border-color: white;
+    background-color: transparent;
+    color: #fff !important;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: bold; */
+  }
+  .job-logo-ima{
+    height: 100px;
+  }
+
+  .applying{
+    box-shadow: 0 0 5px rgb(81 203 238);
+    padding: 3px 0px 3px 3px;
+    margin: 5px 1px 3px 0px;
+    border: 1px solid rgba(81, 203, 238, 1);
+  }
+  .dangungtuyen{
+    font-weight: bold;
+  }
