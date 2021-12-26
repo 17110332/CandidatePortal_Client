@@ -6,6 +6,7 @@ import Login from "./Body/Login";
 import Register from "./Body/Register";
 import QuyTrinhTuyenDung from "./Body/QuyTrinhTuyenDung";
 import Myprofile from "./Profile/Myprofile";
+import Recruit from "./Hr/Recruit";
 const routes = [
     {
         path: "/",
@@ -36,6 +37,11 @@ const routes = [
         path: "/QuyTrinhTuyenDung",
         exact: false,
         main: ()=><QuyTrinhTuyenDung />
+    },
+    {
+        path: "/HrProfile",
+        exact: false,
+        main: ()=><Recruit />
     },
     {
         path: "",
