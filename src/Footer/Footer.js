@@ -3,7 +3,7 @@ class Footer extends Component{
     render()
     {
         return (
-            <div className="container-fluid job-support-wrapper">
+            <div className="container-fluid job-support-wrapper  footeinfo">
                     <div className="container-fluid job-support-wrap">
                     <div className="container job-support">
                         <div className="row">

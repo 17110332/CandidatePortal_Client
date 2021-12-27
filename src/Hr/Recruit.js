@@ -8,53 +8,121 @@ import 'react-toastify/dist/ReactToastify.css';
 import './../Profile/Myprofile.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import Loading from "./../Body/Loading"
+import './Recruit.css';
 import CKEditor from "./../Libs/CKEditor";
 const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
 const applicantcode=tokenlogin !="" && tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
 class Recruit extends Component{
+    constructor(props)
+    {
+        super(props);
+        this.state={
+            Top5ListJobNew:[],
+            preEle:""
+        }
+    }
+    componentDidMount(){
+        axios.get(APIstr +`api/Home/GetTop5JobRecruit`)
+               .then(res=>{
+                    this.setState({
+                        Top5ListJobNew: res && res.data.length >0 ? res.data :[],
+                        preEle:"itemdatamaster_0"
+                    },()=>{
+                        let ele = document.getElementById("itemdatamaster_0");
+                        if(ele)
+                        {
+                            ele.style.backgroundColor= "#ADD8E6";
+                        }
+                    });
+               })
+               .catch(err=> {
+                   console.log(err);
+               })
+    }
+    onClickMaster = (iditem)=>{
+        debugger
+        let {preEle} = this.state;
+        if(iditem != preEle)
+        {
+            //add active
+            let ele = document.getElementById(iditem);
+            if(ele)
+            {
+                ele.style.backgroundColor= "#ADD8E6";
+            }
+            //xóa active cũ
+            let preele = document.getElementById(preEle);
+            if(preele)
+            {
+                preele.style.backgroundColor= "inherit";
+            }
+            this.setState({
+                preEle:iditem
+            },()=>{
+                //load detail nè
+            })
+        }
+    }
+    ShowTop5ListJob = lst=>
+    {
+        var result = null;
+        if(lst.length > 0)
+        {
+          result=lst.map((item, index)=>{
+            let iditem ="itemdatamaster_"+index;
+            return (          
+                <div className="job-tt-item itemdatamaster" id={iditem} key={index} onClick={()=>this.onClickMaster(iditem)}>
+                    <a className="thumb">
+                        <div style={{backgroundImage: 'url("data:image/jpeg;base64,' + item.photo + '")'}}></div>  
+                    </a>
+                    <div className="info">
+                        <a  className="jobname">{item.jobWName}</a>
+                        <a className="company">{item.departmentName}</a>
+                    </div>
+                </div>
+            )
+          });
+        }
+        return result;
+    }
     render()
     {
+        let {Top5ListJobNew} = this.state;
         return(
             <div>
-                <div class="clearfix"></div>
-                <nav class="navbar navbar-expand-lg navbar-light nav-recuitment">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNava" aria-controls="navbarNava" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+                <div className="clearfix"></div>
+                <nav className="navbar navbar-expand-lg navbar-light nav-recuitment">
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNava" aria-controls="navbarNava" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse container" id="navbarNava">
-                        <ul class="navbar-nav nav-recuitment-li">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Quản lý đăng tuyển</a>
+                    <div className="collapse navbar-collapse container" id="navbarNava">
+                        <ul className="navbar-nav nav-recuitment-li">
+                        <li className="nav-item active">
+                            <a className="nav-link" href="#">Danh sách đăng tuyển</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Quản lý ứng viên</a>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Danh mục chức danh</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Quản lý đăng tin</a>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Đăng tuyển đã lưu</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Quản lý hồ sơ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Tài khoản</a>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Hồ sơ ứng viên</a>
                         </li>
                         </ul>
-                        <ul class="rec-nav-right">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Tìm hồ sơ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Đăng tuyển</a>
+                        <ul className="rec-nav-right">
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Đăng tuyển</a>
                         </li>
                         </ul>
                     </div>
                 </nav>
-                <div class="container-fluid">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="home-ads">
+                <div className="container-fluid">
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="home-ads">
                                 <a href="#">
                                     <img src="img/hna2.jpg" />
                                 </a>
@@ -63,458 +131,277 @@ class Recruit extends Component{
                         </div>
                     </div>
                 </div>
-                <div class="container-fluid published-recuitment-wrapper">
-                    <div class="container published-recuitment-content">
-                        <div class="row">
-                        <div class="col-md-8 col-sm-12 col-12 recuitment-inner">
-                            <form class="recuitment-form">
+                <div className="container-fluid published-recuitment-wrapper">
+                    <div className="container published-recuitment-content">
+                        <div className="row">
+                            <div className="col-md-4 col-sm-12 col-12">
+                                <div className="side-bar mb-3">
+                                    <h2 className="widget-title">
+                                        <span>Việc làm tương tự</span>
+                                    </h2>
+                                    
+                                    <div className="job-tt-contain">
+                                    {this.ShowTop5ListJob(Top5ListJobNew)}
 
-                            <div class="accordion" id="accordionExample">
-                                <div class="card recuitment-card">
-                                <div class="card-header recuitment-card-header" id="headingOne">
-                                    <h2 class="mb-0">
-                                    <a class="btn btn-link btn-block text-left recuitment-header" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    </div>
+                                </div>
+                            </div>
+                        <div className="col-md-8 col-sm-12 col-12 recuitment-inner">
+                            <form className="recuitment-form">
+
+                            <div className="accordion" id="accordionExample">
+                                <div className="card recuitment-card">
+                                <div className="card-header recuitment-card-header" id="headingOne">
+                                    <h2 className="mb-0">
+                                    <a className="btn btn-link btn-block text-left recuitment-header" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                         Đăng tin tuyển dụng
-                                        <span id="clickc1_advance2" class="clicksd">
-                                        <i class="fa fa fa-angle-up"></i>
+                                        <span id="clickc1_advance2" className="clicksd">
+                                        <i className="fa fa fa-angle-up"></i>
                                         </span>
                                     </a>
                                     </h2>
                                 </div>
 
-                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                    <div class="card-body recuitment-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Tiêu đề<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="Nhập tiêu đề" />
+                                <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                    <div className="card-body recuitment-body">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Tiêu đề<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="text" className="form-control" placeholder="Nhập tiêu đề" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Số lượng cần tuyển</label>
-                                        <div class="col-sm-9">
-                                        <input type="number" class="form-control" placeholder="1" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Số lượng cần tuyển</label>
+                                        <div className="col-sm-9">
+                                        <input type="number" className="form-control" placeholder="1" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Giới tính<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobGender" data-select2-id="jobGender" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Giới tính<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobGender" data-select2-id="jobGender" tabindex="-1" aria-hidden="true">
                                     
                                             <option value="" data-select2-id="66">Nam</option>
                                             <option value="" data-select2-id="67">Nữ</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="63" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobGender-container"><span class="select2-selection__rendered" id="select2-jobGender-container" role="textbox" aria-readonly="true" title="Chọn giới tính">Chọn giới tính</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Mô tả công việc<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <textarea type="text" class="form-control" placeholder="Nhập mô tả công việc" rows="5"></textarea>
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Mô tả công việc<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                             <textarea type="text" className="form-control" placeholder="Nhập mô tả công việc" rows="5"></textarea>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Yêu cầu công việc<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <textarea type="text" class="form-control" placeholder="Nhập yêu cầu công việc" rows="5"></textarea>
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Yêu cầu công việc<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                             <textarea type="text" className="form-control" placeholder="Nhập yêu cầu công việc" rows="5"></textarea>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Tính chất công việc<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="natureWork" data-select2-id="natureWork" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Tính chất công việc<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="natureWork" data-select2-id="natureWork" tabindex="-1" aria-hidden="true">
                                             <option selected="selected" value="" data-select2-id="2">Chọn tính chất công việc</option>
                                             <option value="18" data-select2-id="3">Giờ hành chính</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="1" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-natureWork-container"><span class="select2-selection__rendered" id="select2-natureWork-container" role="textbox" aria-readonly="true" title="Chọn tính chất công việc">Chọn tính chất công việc</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Trình độ<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobLevel" data-select2-id="jobLevel" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Trình độ<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobLevel" data-select2-id="jobLevel" tabindex="-1" aria-hidden="true">
                                             <option selected="selected" value="" data-select2-id="15">Chọn trình độ</option>
                                             <option value="6" data-select2-id="16">Đại học</option>
                                             <option value="5" data-select2-id="17">Cao đẳng</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="14" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobLevel-container"><span class="select2-selection__rendered" id="select2-jobLevel-container" role="textbox" aria-readonly="true" title="Chọn trình độ">Chọn trình độ</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Kinh nghiệm<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobExperience" data-select2-id="jobExperience" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Kinh nghiệm<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobExperience" data-select2-id="jobExperience" tabindex="-1" aria-hidden="true">
                                             <option selected="selected" value="" data-select2-id="25">Chọn kinh nghiệm</option>
                                             <option value="0" data-select2-id="26">Chưa có kinh nghiệm</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="24" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobExperience-container"><span class="select2-selection__rendered" id="select2-jobExperience-container" role="textbox" aria-readonly="true" title="Chọn kinh nghiệm">Chọn kinh nghiệm</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Mức lương<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobSalary" data-select2-id="jobSalary" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Mức lương<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobSalary" data-select2-id="jobSalary" tabindex="-1" aria-hidden="true">
                                             <option selected="selected" value="" data-select2-id="36">Chọn mức lương</option>
                                             <option value="2" data-select2-id="37">Dưới 3 triệu</option>
                                             <option value="4" data-select2-id="38">3-5 triệu</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="35" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobSalary-container"><span class="select2-selection__rendered" id="select2-jobSalary-container" role="textbox" aria-readonly="true" title="Chọn mức lương">Chọn mức lương</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Hình thức làm việc<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobWorkTime" data-select2-id="jobWorkTime" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Hình thức làm việc<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobWorkTime" data-select2-id="jobWorkTime" tabindex="-1" aria-hidden="true">
                                             <option selected="selected" value="" data-select2-id="50">Chọn hình thức làm việc</option>
                                             <option value="1" data-select2-id="51">Nhân viên chính thức</option>
                                             <option value="2" data-select2-id="52">Nhân viên thời vụ</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="49" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobWorkTime-container"><span class="select2-selection__rendered" id="select2-jobWorkTime-container" role="textbox" aria-readonly="true" title="Chọn hình thức làm việc">Chọn hình thức làm việc</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Thời gian thử việc<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobProbation" data-select2-id="jobProbation" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Thời gian thử việc<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobProbation" data-select2-id="jobProbation" tabindex="-1" aria-hidden="true">
                                             <option selected="selected" value="" data-select2-id="57">Chọn thời gian thử việc</option>
                                             <option value="0" data-select2-id="58">Nhận việc ngay</option>
                                             <option value="1" data-select2-id="59">1 tháng</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="56" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobProbation-container"><span class="select2-selection__rendered" id="select2-jobProbation-container" role="textbox" aria-readonly="true" title="Chọn thời gian thử việc">Chọn thời gian thử việc</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Quyền lợi<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <textarea type="text" class="form-control" placeholder="Quyền lợi công việc" rows="5"></textarea>
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Quyền lợi<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                            <textarea type="text" className="form-control" placeholder="Quyền lợi công việc" rows="5"></textarea>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Ngành nghề</label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobType" data-select2-id="jobType" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Ngành nghề</label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobType" data-select2-id="jobType" tabindex="-1" aria-hidden="true">
                                             <option selected="selected" value="" data-select2-id="69">Chọn ngành nghề</option>
                                             <option value="32" data-select2-id="70">Kinh doanh</option>
                                             <option value="10" data-select2-id="71">Bán hàng</option>
                                          
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="68" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobType-container"><span class="select2-selection__rendered" id="select2-jobType-container" role="textbox" aria-readonly="true" title="Chọn ngành nghề">Chọn ngành nghề</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Nơi làm việc</label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobProvince" data-select2-id="jobProvince" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Nơi làm việc</label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobProvince" data-select2-id="jobProvince" tabindex="-1" aria-hidden="true">
                                             <option value="1" data-select2-id="127">Hồ Chí Minh</option>
                                             <option value="2" data-select2-id="128">Hà Nội</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="126" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobProvince-container"><span class="select2-selection__rendered" id="select2-jobProvince-container" role="textbox" aria-readonly="true" title="Hồ Chí Minh">Hồ Chí Minh</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Hạn nộp hồ sơ<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="date" class="form-control" placeholder="Nhập nơi làm việc" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Hạn nộp hồ sơ<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="date" className="form-control" placeholder="Nhập nơi làm việc" />
                                         </div>
                                     </div>
                                     </div>
                                 </div>
                                 </div>
-                                <div class="card recuitment-card">
-                                <div class="card-header recuitment-card-header" id="headingTwo">
-                                    <h2 class="mb-0">
-                                    <a class="btn btn-link btn-block text-left collapsed recuitment-header" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <div className="card recuitment-card">
+                                <div className="card-header recuitment-card-header" id="headingTwo">
+                                    <h2 className="mb-0">
+                                    <a className="btn btn-link btn-block text-left collapsed recuitment-header" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         Phúc lợi
-                                        <span id="clickc1_advance3" class="clicksd">
-                                        <i class="fa fa fa-angle-up"></i>
+                                        <span id="clickc1_advance3" className="clicksd">
+                                        <i className="fa fa fa-angle-up"></i>
                                         </span>
                                     </a>
                                     </h2>
                                 </div>
-                                <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                    <div class="card-body recuitment-body">
-                                    <div class="checkboxsec" id="checkboxSection">
-                                    <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chăm sóc sức khỏe</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Laptop</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Du lịch nước ngoài</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>phụ cấp thâm niên</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Du lịch</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Đào tạo</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Phụ cấp</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Đồng phục</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Nghỉ phép năm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ thưởng</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Tăng lương</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Xe đưa đón</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Công tác phí</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>CLB thể thao</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-                                        <div class="filter-topic">
-                                        <label class="label-container">
-                                            <span>Chế độ bảo hiểm</span>
-                                                <input type="checkbox" name="" value="1" />
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        </div>
-
-                                    </div>
+                                <div id="collapseTwo" className="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                    <div className="card-body recuitment-body">
+                                        bỏ ck editor vào
                                     </div>
                                 </div>
                                 </div>
-                                <div class="card recuitment-card">
-                                <div class="card-header recuitment-card-header" id="headingThree">
-                                    <h2 class="mb-0">
-                                    <a class="btn btn-link btn-block text-left collapsed recuitment-header" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <div className="card recuitment-card">
+                                <div className="card-header recuitment-card-header" id="headingThree">
+                                    <h2 className="mb-0">
+                                    <a className="btn btn-link btn-block text-left collapsed recuitment-header" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                         Thông tin liên hệ
-                                        <span id="clickc1_advance1" class="clicksd">
-                                        <i class="fa fa fa-angle-up"></i>
+                                        <span id="clickc1_advance1" className="clicksd">
+                                        <i className="fa fa fa-angle-up"></i>
                                         </span>
                                     </a>
                                     </h2>
                                 </div>
-                                <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
-                                    <div class="card-body recuitment-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Tên người liên hệ<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="Tên người liên hệ" />
+                                <div id="collapseThree" className="collapse show" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                    <div className="card-body recuitment-body">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Tên người liên hệ<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="text" className="form-control" placeholder="Tên người liên hệ" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Email<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="mail" class="form-control" placeholder="Địa chỉ email" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Email<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="mail" className="form-control" placeholder="Địa chỉ email" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Địa chỉ<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="Nhập địa chỉ" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Địa chỉ<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="text" className="form-control" placeholder="Nhập địa chỉ" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Điện thoại<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="number" class="form-control" placeholder="Nhập số điện thoại" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Điện thoại<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="number" className="form-control" placeholder="Nhập số điện thoại" />
                                         </div>
                                     </div>
                                     </div>
                                 </div>
                                 </div>
-                                <div class="card recuitment-card">
-                                <div class="card-header recuitment-card-header" id="heading4">
-                                    <h2 class="mb-0">
-                                    <a class="btn btn-link btn-block text-left collapsed recuitment-header" type="button" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                <div className="card recuitment-card">
+                                <div className="card-header recuitment-card-header" id="heading4">
+                                    <h2 className="mb-0">
+                                    <a className="btn btn-link btn-block text-left collapsed recuitment-header" type="button" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
                                         Thông tin công ty
-                                        <span id="clickc1_advance4" class="clicksd">
-                                        <i class="fa fa fa-angle-up"></i>
+                                        <span id="clickc1_advance4" className="clicksd">
+                                        <i className="fa fa fa-angle-up"></i>
                                         </span>
                                     </a>
                                     </h2>
                                 </div>
-                                <div id="collapse4" class="collapse show" aria-labelledby="heading4" data-parent="#collapse4">
-                                    <div class="card-body recuitment-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Tên công ty<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="Tên công ty" />
+                                <div id="collapse4" className="collapse show" aria-labelledby="heading4" data-parent="#collapse4">
+                                    <div className="card-body recuitment-body">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Tên công ty<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="text" className="form-control" placeholder="Tên công ty" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Địa chỉ<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="Nhập địa chỉ" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Địa chỉ<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="text" className="form-control" placeholder="Nhập địa chỉ" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Điện thoại<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <input type="number" class="form-control" placeholder="Nhập số điện thoại" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Điện thoại<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <input type="number" className="form-control" placeholder="Nhập số điện thoại" />
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Tỉnh/ Thành phô<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobProvince2" data-select2-id="jobProvince2" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Tỉnh/ Thành phô<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobProvince2" data-select2-id="jobProvince2" tabindex="-1" aria-hidden="true">
                                             <option value="1" data-select2-id="193">Hồ Chí Minh</option>
                                             <option value="2" data-select2-id="194">Hà Nội</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="192" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobProvince2-container"><span class="select2-selection__rendered" id="select2-jobProvince2-container" role="textbox" aria-readonly="true" title="Hồ Chí Minh">Hồ Chí Minh</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Quy mô nhân sự<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobEmployerScale" data-select2-id="jobEmployerScale" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Quy mô nhân sự<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobEmployerScale" data-select2-id="jobEmployerScale" tabindex="-1" aria-hidden="true">
                                             <option value="" data-select2-id="259">Chọn quy mô</option>
                                             <option selected="selected" value="1" data-select2-id="260">Dưới 20 người</option>
                                             <option value="2" data-select2-id="261">20 - 150 người</option>
-                                        </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="258" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobEmployerScale-container"><span class="select2-selection__rendered" id="select2-jobEmployerScale-container" role="textbox" aria-readonly="true" title="Dưới 20 người">Dưới 20 người</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Quy mô nhân sự</label>
-                                        <div class="col-sm-9">
-                                        <select type="text" class="form-control select2-hidden-accessible" id="jobFieldsActivity" data-select2-id="jobFieldsActivity" tabindex="-1" aria-hidden="true">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Quy mô nhân sự</label>
+                                        <div className="col-sm-9">
+                                        <select type="text" className="form-control select2-hidden-accessible" id="jobFieldsActivity" data-select2-id="jobFieldsActivity" tabindex="-1" aria-hidden="true">
                                             <optgroup label="NÔNG NGHIỆP, LÂM NGHIỆP VÀ THUỶ SẢN">
                                             <option value="22" data-select2-id="265">Nông nghiệp và hoạt động dịch vụ có liên quan</option>
                                             <option value="23" data-select2-id="266">Lâm nghiệp và hoạt động dịch vụ có liên quan</option>
@@ -595,188 +482,55 @@ class Recruit extends Component{
                                             <option value="112" data-select2-id="350">Hoạt động của các tổ chức và cơ quan quốc tế</option>
                                             </optgroup>
                                             <optgroup label="">
-                                        </optgroup></select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="264" style={{width:"487.5px"}}><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-jobFieldsActivity-container"><span class="select2-selection__rendered" id="select2-jobFieldsActivity-container" role="textbox" aria-readonly="true" title="Nông nghiệp và hoạt động dịch vụ có liên quan">Nông nghiệp và hoạt động dịch vụ có liên quan</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </optgroup></select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Sơ lược về công ty<span style={{color:"red"}} class="pl-2">*</span></label>
-                                        <div class="col-sm-9">
-                                        <textarea type="text" class="form-control" placeholder="Sơ lược về công ty" rows="5"></textarea>
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Sơ lược về công ty<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                        <textarea type="text" className="form-control" placeholder="Sơ lược về công ty" rows="5"></textarea>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Logo</label>
-                                        <div class="col-sm-9 ">
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Logo</label>
+                                        <div className="col-sm-9 ">
                                         <div id="drop-area">
                                     
                                             <input type="file" id="fileElem" multiple="" accept="image/*" onchange="handleFiles(this.files)" />
                                             <label style={{cursor: "pointer;"}} for="fileElem">Tải ảnh lên hoặc kéo thả vào đây</label>
-                                            <progress id="progress-bar" max="100" value="0" class="d-none"></progress>
+                                            <progress id="progress-bar" max="100" value="0" className="d-none"></progress>
                                             <div id="gallery"></div>
                                         
                                         </div>
                                         
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label text-right label">Website</label>
-                                        <div class="col-sm-9">
-                                        <input type="text" class="form-control" placeholder="Website" />
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Website</label>
+                                        <div className="col-sm-9">
+                                        <input type="text" className="form-control" placeholder="Website" />
                                         </div>
                                     </div>
                                     </div>
                                 </div>
                                 </div>
                             </div>
-                            <div class="rec-submit">
-                                <button type="submit" class="btn-submit-recuitment" name="">
-                                <i class="fa fa-floppy-o pr-2"></i>Lưu Tin
-                                </button>
-                            </div>
+                                <div className="rec-submit" id="divsubmit">
+                                <button  id="btnxoa" className="btn-submit-recuitment" name="">
+                                         <i className="fa fa-trash-o pr-2"></i>Xóa
+                                    </button>
+                                    <button type="submit" id="btnluu" className="btn-submit-recuitment" name="">
+                                         <i className="fa fa-floppy-o pr-2"></i>Lưu
+                                    </button>
+                                   
+                                </div>
                             </form>
-                            
                         </div>
-                        <div class="col-md-4 col-sm-12 col-12">
-                            <div class="recuiter-info">
-                            <div class="recuiter-info-avt">
-                                <img src="img/icon_avatar.jpg" />
-                            </div>
-                            <div class="clearfix list-rec">
-                                <h4>NESTLE Inc.</h4>
-                                <ul>
-                                <li><a href="#">Việc làm đang đăng <strong>(0)</strong></a></li>
-                                <li><a href="#">Follower <strong>(450)</strong></a></li>
-                                </ul>
-                            </div>
-                            </div>
-
-
-                            <div class="block-sidebar" style={{marginBottom: "20px;"}}>
-                    <header>
-                        <h3 class="title-sidebar font-roboto bg-primary">
-                            Trung tâm quản lý
-                        </h3>
-                    </header>
-                    <div class="content-sidebar menu-trung-tam-ql menu-ql-employer">
-                        <h3 class="menu-ql-ntv">
-                            Quản lý tài khoản
-                        </h3>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                Tài khoản
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                Giấy phép kinh doanh
-                                </a>
-                            </li>
-                        </ul>
-                        <h3 class="menu-ql-ntv">
-                            Quản lý dịch vụ
-                        </h3>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                Lịch sử dịch vụ
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" target="_blank">
-                                Báo giá
-                                </a>
-                            </li>
-                        </ul>
-                        <h3 class="menu-ql-ntv">
-                            Quản lý tin tuyển dụng
-                        </h3>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                Đăng tin tuyển dụng
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                Danh sách tin tuyển dụng
-                                </a>
-                            </li>
-                        </ul>
-                        <h3 class="menu-ql-ntv">
-                            Quản lý ứng viên
-                        </h3>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                Tìm kiếm hồ sơ
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                Hồ sơ đã lưu
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                Hồ sơ đã ứng tuyển
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" title="Thông báo hồ sơ phù hợp">
-                                Thông báo hồ sơ phù hợp
-                                </a>
-                            </li>
-                        </ul>
-                        <h3 class="menu-ql-ntv">
-                            Hỗ trợ và thông báo
-                        </h3>
-                        <ul>
-                            <li>
-                                <a href="#" title="Gửi yêu cầu đến ban quản trị">
-                                Gửi yêu cầu đến ban quản trị
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" title="Ban quản trị thông báo">
-                                Ban quản trị thông báo
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" title="Hướng dẫn thao tác">
-                                Hướng dẫn thao tác
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" target="_blank">
-                                <span>Thông tin thanh toán</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a target="_blank" href="#">
-                                <span>Cổng tra cứu lương</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a target="_blank" href="#">
-                                <span> Cẩm nang tuyển dụng</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul>
-                            <li class="logout">
-                                <a href="#" title="Đăng xuất">
-                                Đăng xuất
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
+                       
+                </div>
             </div>
+        </div>
+    </div>
         );
     }
 }

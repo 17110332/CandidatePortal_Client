@@ -1,0 +1,29 @@
+.footeinfo{
+    display: none;
+}
+#btnluu{
+    float: right;
+    /* padding-right: 61px; */
+    margin-right: 10px;
+    background: #0065d1;
+    border-color: #0065d1;
+}
+#btnxoa{
+    background: #0065d1;
+    border-color: #0065d1;
+    float: right;
+    /* margin-left: 42px; */
+    margin-right: -15px;
+  
+}
+#divsubmit{
+    bottom: 0;
+    position: fixed;
+    z-index: 3000;
+    width: 52%;
+    background-color: #0065d1;
+    padding-left: 0px;
+}
+.itemdatamaster{
+    cursor: pointer;
+}

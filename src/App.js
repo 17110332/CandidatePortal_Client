@@ -29,7 +29,7 @@ class App extends Component{
           {this.ShowContent(routes)}
           <div className="clearfix"></div>
           <Footer />
-          <div class="container-fluid footer-wrap  clear-left clear-right">
+          <div class="container-fluid footer-wrap  clear-left clear-right footeinfo">
                     <div class="container footer">
                         <div class="row">
                             <div class="col-md-4 col-sm-8 col-12">
