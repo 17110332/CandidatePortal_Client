@@ -21,9 +21,49 @@
     position: fixed;
     z-index: 3000;
     width: 52%;
-    background-color: #0065d1;
+    background-color: #008ccb ; /*#0065d1*/
     padding-left: 0px;
+}
+
+#divmaster{
+    bottom: 0;
+    position: fixed;
+    z-index: 3000;
+    width: 52%;
+    background-color: #008ccb ; /*#0065d1*/
+    padding-left: 0px;
+    width: 28%;
+    margin-left: -12px;
+}
+#btnadd{
+    float: right;
+    /* padding-right: 61px; */
+    margin-right: 10px;
+    background: #0065d1;
+    border-color: #0065d1;
 }
 .itemdatamaster{
     cursor: pointer;
+}
+#timkiem{
+    width: 100%;
+    margin-bottom: 10px
+
+}
+.lstmaster{
+    background: #fff;
+}
+.recuitment-form{
+    max-height: 100vh;
+    overflow: auto;
+}
+.job-tt-contain{
+    max-height: 100vh;
+    overflow: auto;
+}
+
+.lstmaster .pagination{
+    bottom: 30px;
+    position: fixed;
+    z-index: 3000;
 }

@@ -10,6 +10,8 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import Loading from "./../Body/Loading"
 import './Recruit.css';
 import CKEditor from "./../Libs/CKEditor";
+import Pagination from "react-js-pagination";
+
 const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
 const applicantcode=tokenlogin !="" && tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
@@ -19,29 +21,57 @@ class Recruit extends Component{
         super(props);
         this.state={
             Top5ListJobNew:[],
-            preEle:""
+            preEle:"",
+            activePage:1,
+            PageIndex:1,
+            PageSize:0,
+            TotalPage:0,
+            loading:false
         }
     }
     componentDidMount(){
-        axios.get(APIstr +`api/Home/GetTop5JobRecruit`)
-               .then(res=>{
+        this.onLoadDataMaster();
+    }
+    onLoadDataMaster = (callback)=>{
+        this.setState({
+            loading:true
+        },()=>{
+            let {PageIndex} = this.state;
+            let Params = new FormData();
+            Params.set('pageindex',PageIndex);
+            Params.set('ApplicantCode',applicantcode);
+            axios.post(APIstr +`api/Recruit/GetRecruitsByUserID`,Params)
+                   .then(res=>{
+                        this.setState({
+                            Top5ListJobNew: res && res.data && res.data.lstJob.length >0 ? res.data.lstJob :[],
+                            PageSize:res && res.data ? res.data.pageSize:0,
+                            TotalPage:res && res.data ? res.data.totalPage:0
+                           
+                        });
+                        if(callback)
+                        {
+                            callback();
+                        }
+                   })
+                   .catch(err=> {
+                       console.log(err);
+                   })
+                   .finally(() => {
                     this.setState({
-                        Top5ListJobNew: res && res.data.length >0 ? res.data :[],
+                        loading:false,
                         preEle:"itemdatamaster_0"
                     },()=>{
                         let ele = document.getElementById("itemdatamaster_0");
                         if(ele)
                         {
-                            ele.style.backgroundColor= "#ADD8E6";
+                            ele.style.backgroundColor="#ADD8E6";
                         }
-                    });
-               })
-               .catch(err=> {
-                   console.log(err);
-               })
+                    })
+                });
+        })
+        
     }
     onClickMaster = (iditem)=>{
-        debugger
         let {preEle} = this.state;
         if(iditem != preEle)
         {
@@ -64,7 +94,7 @@ class Recruit extends Component{
             })
         }
     }
-    ShowTop5ListJob = lst=>
+    ShowListJob = lst=>
     {
         var result = null;
         if(lst.length > 0)
@@ -74,7 +104,7 @@ class Recruit extends Component{
             return (          
                 <div className="job-tt-item itemdatamaster" id={iditem} key={index} onClick={()=>this.onClickMaster(iditem)}>
                     <a className="thumb">
-                        <div style={{backgroundImage: 'url("data:image/jpeg;base64,' + item.photo + '")'}}></div>  
+                        <div style={{backgroundImage: 'url("data:image/jpeg;base64,' + item.photo + '")'}} ></div>  
                     </a>
                     <div className="info">
                         <a  className="jobname">{item.jobWName}</a>
@@ -86,9 +116,16 @@ class Recruit extends Component{
         }
         return result;
     }
+    handlePageChange =(pageNumber)=>{
+        this.setState({
+            PageIndex:pageNumber
+        },()=>{
+            this.onLoadDataMaster();
+        });
+    }
     render()
     {
-        let {Top5ListJobNew} = this.state;
+        let {Top5ListJobNew,PageIndex,PageSize,TotalPage,loading} = this.state;
         return(
             <div>
                 <div className="clearfix"></div>
@@ -134,16 +171,31 @@ class Recruit extends Component{
                 <div className="container-fluid published-recuitment-wrapper">
                     <div className="container published-recuitment-content">
                         <div className="row">
-                            <div className="col-md-4 col-sm-12 col-12">
-                                <div className="side-bar mb-3">
-                                    <h2 className="widget-title">
-                                        <span>Việc làm tương tự</span>
-                                    </h2>
-                                    
-                                    <div className="job-tt-contain">
-                                    {this.ShowTop5ListJob(Top5ListJobNew)}
-
-                                    </div>
+                            <div className="col-md-4 col-sm-12 col-12 lstmaster">
+                                <input type="input" placeholder="Tìm kiếm" id="timkiem"/>
+                                <div className="job-tt-contain">
+                                    {
+                                        loading ? <Loading />
+                                        :
+                                        this.ShowListJob(Top5ListJobNew)
+                                    }
+                                  
+                                   
+                                </div>
+                                <Pagination
+                                        activePage={parseInt(PageIndex)}
+                                        itemsCountPerPage={5} // số ptu trang hien tai
+                                        totalItemsCount={parseInt(PageSize)} // tổng số ptu
+                                        pageRangeDisplayed={parseInt(TotalPage)} // hiển thị các nút phân trang
+                                        onChange={this.handlePageChange}
+                                        itemClass="page-item"
+                                        linkClass="page-link"
+                                        />
+                                <div id="divmaster">
+                                
+                                    <button type="button" id="btnadd" className="btn-submit-recuitment" name="">
+                                         <i className="fa fa-floppy-o pr-2"></i>Thêm
+                                    </button>
                                 </div>
                             </div>
                         <div className="col-md-8 col-sm-12 col-12 recuitment-inner">
@@ -516,13 +568,12 @@ class Recruit extends Component{
                                 </div>
                             </div>
                                 <div className="rec-submit" id="divsubmit">
-                                <button  id="btnxoa" className="btn-submit-recuitment" name="">
+                                     <button  id="btnxoa" className="btn-submit-recuitment" name="">
                                          <i className="fa fa-trash-o pr-2"></i>Xóa
                                     </button>
                                     <button type="submit" id="btnluu" className="btn-submit-recuitment" name="">
                                          <i className="fa fa-floppy-o pr-2"></i>Lưu
                                     </button>
-                                   
                                 </div>
                             </form>
                         </div>
