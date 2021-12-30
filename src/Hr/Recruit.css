@@ -67,3 +67,6 @@
     position: fixed;
     z-index: 3000;
 }
+.inputtext{
+    width: 380px;
+}

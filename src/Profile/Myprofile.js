@@ -286,7 +286,7 @@ class Myprofile extends Component{
     }
     //load quận huyện
     ShowListDistrict = (ListDistrict,infperson)=>{
-        var result = null;
+        var result = null; 
         if(ListDistrict.length > 0)
         {
           result=ListDistrict.map((item, index)=>{
