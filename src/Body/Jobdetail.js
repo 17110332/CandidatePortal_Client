@@ -118,7 +118,7 @@ class Jobdetail extends Component{
                 })
             })
            
-        }
+        } 
     }
     ShowTop5ListJob = lst=>
     {

@@ -7,6 +7,8 @@ import Register from "./Body/Register";
 import QuyTrinhTuyenDung from "./Body/QuyTrinhTuyenDung";
 import Myprofile from "./Profile/Myprofile";
 import Recruit from "./Hr/Recruit";
+import Candidate from "./Hr/Candidate"
+import Profilecandidate from "./Profile/Profilecandidate";
 const routes = [
     {
         path: "/",
@@ -42,6 +44,16 @@ const routes = [
         path: "/HrProfile",
         exact: false,
         main: ()=><Recruit />
+    },
+    {
+        path: "/HrCandidate",
+        exact: false,
+        main: ()=><Candidate />
+    },
+    {
+        path: "/Profilecandidate/:applicantcode",
+        exact: false,
+        main: ({match})=><Profilecandidate match={match} />
     },
     {
         path: "",

@@ -7,6 +7,8 @@ import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';  
 
 const APIstr = Listconst.API;
+const sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
+const role = base64_decode(sessionlogin).split("!@#$#@!").length >1 ?base64_decode(sessionlogin).split("!@#$#@!")[1] : 1; //1: ứng viên, 2: hr
 
 class Login extends Component{
     constructor(props){
@@ -69,8 +71,14 @@ class Login extends Component{
                                             <Link className="nav-link" to="/QuyTrinhTuyenDung">Quy trình tuyển dụng</Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="index.html">Tin Tức</a>
+                                            <a className="nav-link" href="https://www.lacviet.vn/tin-tuc" target="_blank">Tin Tức</a>
                                         </li>
+                                        {
+                                            role ==2 && 
+                                            <li className="nav-item">
+                                                    <Link className="nav-link" to="/HrProfile">Quản lý tuyển dụng</Link>
+                                            </li>
+                                        }
                                         {/* <li className="nav-item dropdown">
                                             <a href="index.html" className="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Dropdown
@@ -92,7 +100,7 @@ class Login extends Component{
                                             <li className="nav-item dropdown">
                                                  <a className="nav-link dropdown-toggle" to="/Register" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Xin chào {FullName}</a>
                                                  <div className="dropdown-menu tdropdown" aria-labelledby="navbarDropdown">
-                                                 <Link className="dropdown-item" to="/Myprofile">Thông tin cá nhân</Link>
+                                                    <Link className="dropdown-item" to="/Myprofile">Thông tin cá nhân</Link>
                                                 </div>
                                             </li>
                                             

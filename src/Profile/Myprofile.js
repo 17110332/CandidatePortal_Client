@@ -323,7 +323,6 @@ class Myprofile extends Component{
     onSave =()=>{
         let {province,district,ward,street,infperson,applicantCode, avatar, birthDay,cvApplicant,districtCode, email, exp, firstName, gender,graduated,introduceYourself,lastName,level, married,mobile,provinceCode,school,skill,skillOther,streetName, titleDoc,username, wardCode, workProgress}= this.state;
         var infopersonAdd =  new FormData();
-        debugger
         if(!birthDay)
         {
             toast.error('Nhập ngày sinh!');

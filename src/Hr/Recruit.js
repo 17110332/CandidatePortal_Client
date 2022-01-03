@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import Listconst from '../Const/Listconst';
+import DefaultAVT from '../Const/AVT';
 import  '../Body/Search.css'
 import axios from 'axios';
-
+import { ToastContainer,toast } from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css';  
 import './../Profile/Myprofile.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
@@ -11,12 +12,26 @@ import Loading from "./../Body/Loading"
 import './Recruit.css';
 import CKEditor from "./../Libs/CKEditor";
 import Pagination from "react-js-pagination";
-
-
+import swal from 'sweetalert2';
+import Notfound from '../Body/Notfound';
 
 const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStorage.getItem("TokenLogin")) : "";
 const applicantcode=tokenlogin !="" && tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
+const avata = DefaultAVT.base64str;
+const sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
+const role = base64_decode(sessionlogin).split("!@#$#@!").length >1 ?base64_decode(sessionlogin).split("!@#$#@!")[1] : 1; //1: ứng viên, 2: hr
+
+const swalWithBootstrapButtons = swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  })
+  
+ 
+
 class Recruit extends Component{
     constructor(props)
     {
@@ -34,19 +49,22 @@ class Recruit extends Component{
             loading:false,
             ListJobW:[],
             JobWSelected:"",
-            dataDetail:{},
+            dataDetail:{
+                photo:avata
+            },
             isfirstload:true,
             loadingmaster:false,
             TypeJobWSelected:"",
             ListTypeJobW:[],
             DepartmentSelected:"",
             ListDepartment:[],
-
+            IsAddNew:false,
             //model dùng chung
             quantity:0,
             fomDate:"",
             tDate:"",
             isActive:0,
+            isAgree:false,
             photo:"",
             jobdescription:"",
             benefits:"",
@@ -54,7 +72,9 @@ class Recruit extends Component{
             language:"",
             exp:"",
             fromSalary:"",
-            toSalary:""
+            toSalary:"",
+            fromDate:"",
+            toDate:""
         }
     }
     componentDidMount(){
@@ -63,16 +83,7 @@ class Recruit extends Component{
         this.GetListDepartment();
         this.onLoadDataMaster();
     }
-    onChange = event=>{
-        var target = event.target;
-        var name= target.name;
-        var value = target.value;
-        this.setState({
-            dataDetail:{
-                [name] : value
-            }
-        });
-    }
+    
     //==================
     GetListDepartment = ()=>{
         axios.get(APIstr +"api/Home/GetDepartment")
@@ -155,7 +166,22 @@ class Recruit extends Component{
     GetSelectJobW=e=>{
         this.setState({
             JobWSelected: e.target.value
-        },()=>{ console.log("e.target.value",e.target.value)});
+        },()=>{ 
+            axios.get(APIstr +`api/Recruit/GetSalary/${e.target.value}`)
+            .then(res=>{
+                console.log("GetSalary",res);
+                let object = JSON.parse(JSON.stringify(this.state.dataDetail))
+                object["fromSalary"] = res.data ? res.data.fromSalary :""
+                object["toSalary"] = res.data ? res.data.toSalary :""
+                object["isAgree"] = res.data ? res.data.isAgree :false
+                this.setState({
+                    dataDetail:object
+                });
+            })
+            .catch(err=>{
+                console.log(err)
+            })
+        });
     }
     ShowJobWorking = (ListJobW)=>{
         var result = null; 
@@ -182,6 +208,7 @@ class Recruit extends Component{
             Params.set('ApplicantCode',applicantcode);
             axios.post(APIstr +`api/Recruit/GetRecruitsByUserID`,Params)
                    .then(res=>{
+                       console.log("Top5ListJobNew",res)
                         this.setState({
                             Top5ListJobNew: res && res.data && res.data.lstJob.length >0 ? res.data.lstJob :[],
                             PageSize:res && res.data ? res.data.pageSize:0,
@@ -213,8 +240,12 @@ class Recruit extends Component{
         
     }
     onLoadDetail = (recruitID)=>{
-        axios.get(APIstr +`api/Home/GetRecruitDetail/${recruitID}`)
+        axios.get(APIstr +`api/Recruit/GetRecruitDetail/${recruitID}`)
         .then(res=>{
+            if(res && res.data.length > 0 && (!res.data[0].photo || res.data[0].photo==""))
+            {
+                res.data[0].photo=avata;
+            }
             this.setState({
                   dataDetail: res && res.data.length >0 ? res.data[0] :[],
                   JobWSelected: res && res.data.length >0 ? res.data[0].jobWCode:"",
@@ -223,7 +254,10 @@ class Recruit extends Component{
             });
         })
         .finally(() => {
-            this.setState({loadingmaster:false})
+            this.setState({
+                loadingmaster:false,
+                IsAddNew:false
+            })
         });
     }
     onClickMaster = (recruitID,iditem)=>{
@@ -285,22 +319,200 @@ class Recruit extends Component{
             this.onLoadDataMaster();
         });
     }
-    onChangebenefits= ()=>{
-
+    onChange = event=>{
+        var target = event.target;
+        var name= target.name;
+        var value = target.type=="checkbox" ? (target.checked ? true : false) : target.value;
+        let object = JSON.parse(JSON.stringify(this.state.dataDetail))
+        object[name] = value
+        this.setState({
+            dataDetail:object
+            // dataDetail:{
+            //     [name] : value
+            // }
+        });
     }
-    onChangerequired =()=>{
-        
+    onChangebenefits= (evt)=>{
+        let object = JSON.parse(JSON.stringify(this.state.dataDetail))
+        object["benefits"] =  evt.editor.getData()
+        this.setState({
+            dataDetail:object
+        });
     }
-    onChangedescription =()=>{
+    onChangerequired =(evt)=>{
+        let object = JSON.parse(JSON.stringify(this.state.dataDetail))
+        object["required"] =  evt.editor.getData()
+        this.setState({
+            dataDetail:object
+        });
+    }
+    onChangedescription =(evt)=>{
+        let object = JSON.parse(JSON.stringify(this.state.dataDetail))
+        object["jobdescription"] =  evt.editor.getData()
+        this.setState({
+            dataDetail:object
+        });
+    }
+    onImageChange = e => {
+        e.preventDefault();
+        let file = e.target.files[0];  
+        if(file && (file.type !="image/png") && (file.type !="image/jpg") && (file.type !="image/jpeg"))
+        {
+            toast.error('Avatar không đúng định dạng!')
+            return;
+        }
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            if(reader.result)
+            {
+                let object = JSON.parse(JSON.stringify(this.state.dataDetail))
+                object["photo"] = reader.result.replace("data:image/png;base64,","").replace("data:image/jpg;base64,","").replace("data:image/jpeg;base64,","");
+                this.setState({
+                    dataDetail:object
+                });
+            }
+        };
+    }
+    doBeforeSave = (callback)=>{
+        //ktra coi có bỏ trống field nào ko
+        let {dataDetail,TypeJobWSelected,DepartmentSelected,JobWSelected} = this.state;
+        dataDetail.modifiedBy=applicantcode;
+        dataDetail.typeJobWCode=TypeJobWSelected;
+        dataDetail.departmentCode=DepartmentSelected;
+        dataDetail.jobWCode=JobWSelected
+        let keys = Object.keys(dataDetail);
 
+        for (var i = 0; i < keys.length; i++) {
+            if(!dataDetail[keys[i]] || dataDetail[keys[i]]=="")
+            {
+                if(keys[i] != "isActive" && keys[i] != "createdBy" && keys[i] != "createdOn" && keys[i] != "modifiedBy" && keys[i] != "modifiedOn" && keys[i] != "isAgree")
+                {   
+                    toast.error('Dữ liệu nhập thiếu trường '+keys[i] +' bắt buộc');
+                    return;
+                }
+            }
+        }
+        if(callback)
+            callback(dataDetail);
+    }
+    doSave =(dataDetail)=>{
+        let datasave =  new FormData();
+        //datasave.set('RecruitRequest',JSON.stringify(dataDetail));
+        datasave.set('RecruitID',dataDetail.recruitID);
+        datasave.set('TypeJobWCode',dataDetail.typeJobWCode);
+        datasave.set('DepartmentCode',dataDetail.departmentCode);
+        datasave.set('JobWCode',dataDetail.jobWCode);
+        datasave.set('Quantity',dataDetail.quantity);
+        datasave.set('FromDate',dataDetail.fromDate);
+        datasave.set('ToDate',dataDetail.toDate);
+        datasave.set('IsActive',dataDetail.isActive);
+        datasave.set('Photo',dataDetail.photo);
+        datasave.set('CreatedBy',applicantcode);
+        datasave.set('Jobdescription',dataDetail.jobdescription);
+        datasave.set('Benefits',dataDetail.benefits);
+        datasave.set('Language',dataDetail.language);
+        datasave.set('Exp',dataDetail.exp);
+        datasave.set('Required',dataDetail.required);
+        // for (var pair of datasave.entries()) {
+        //     console.log("datasave",pair[0]+ ', ' + pair[1]); 
+        // }
+        axios.post(APIstr +`api/Recruit/SaveRecruit`,datasave)
+        .then(res=>{
+            if(dataDetail.recruitID != -1)
+            {
+                toast.success('Cập nhật xong!');
+            }
+            else
+            {
+                toast.success('Đã thêm xong!');
+            }
+            this.setState({
+                IsAddNew:false
+            });
+        })
+        .catch(err=>{
+            console.log("eee",err)
+        })
+    }
+    doSaveAfterValidate = ()=>{
+        this.doBeforeSave(this.doSave);
+    }
+    onClickAdd =()=>{
+        this.setState({
+            IsAddNew:true,
+            dataDetail:{
+                recruitID:-1,
+                typeJobWCode:"",
+                departmentCode:"",
+                jobWCode:"",
+                quantity:"",
+                fromDate:"",
+                toDate:"",
+                isActive:false,
+                isAgree:false,
+                photo:avata,
+                createdBy:"",
+                jobdescription:"",
+                benefits:"",
+                exp:"",
+                language:"",
+                toSalary:"",
+                fromSalary:"",
+                required:""
+            }
+        });
+    }
+    onDeleteRecruit = (recruitID)=>{
+        swalWithBootstrapButtons.fire({
+            title: 'Chắc chắn xóa?',
+            text: "Dữ liệu xóa hoàn toàn khỏi hệ thống!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Chắc chắn!',
+            cancelButtonText: 'Đóng!',
+            reverseButtons: true
+          }).then((result) => {
+            if ( result.dismiss === swal.DismissReason.cancel) 
+            {
+              swalWithBootstrapButtons.fire(
+                'Đã hủy',
+                'Kiểm tra kỹ trước khi xóa',
+                'error'
+              )
+            }
+            else
+            {
+                axios.get(APIstr +`api/Recruit/DeleteRecruit/${recruitID}`)
+                .then(res=>{
+                    swalWithBootstrapButtons.fire(
+                        'Đã xóa!',
+                        'Dữ liệu không còn trên hệ thống.',
+                        'success'
+                      )
+                })
+                .catch(err=> {
+                    swalWithBootstrapButtons.fire(
+                        'Xóa lỗi',
+                        'Kiểm tra lại API',
+                        'error'
+                      )
+                })
+                .finally(() => {
+                    this.onLoadDataMaster(()=>{});
+                });
+            }
+          })
     }
     render()
     {  
-        let {Top5ListJobNew,PageIndex,PageSize,TotalPage,loading,ListJobW,
-            dataDetail,JobWSelected,loadingmaster,ListTypeJobW,ListDepartment,
-            quantity,fromDate,toDate,isActive,photo,jobdescription,benefits,required,language,
-            rxp,toSalary,fromSalary} = this.state;
-            console.log("dataDetail",dataDetail)
+        if(role != 2)
+        {
+            return <Notfound />
+        }
+        else{
+        let {Top5ListJobNew,PageIndex,PageSize,TotalPage,loading,ListJobW, dataDetail,ListTypeJobW,ListDepartment} = this.state;
+        console.log("Top5ListJobNew",Top5ListJobNew)
         return(
             <div>
                 <div className="clearfix"></div>
@@ -311,21 +523,13 @@ class Recruit extends Component{
                     <div className="collapse navbar-collapse container" id="navbarNava">
                         <ul className="navbar-nav nav-recuitment-li">
                         <li className="nav-item active">
-                            <a className="nav-link" href="#">Danh sách đăng tuyển</a>
+                        <Link to={`/HrProfile`}  className="nav-link">Danh sách đăng tuyển</Link>
                         </li>
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <a className="nav-link" href="#">Danh mục chức danh</a>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Đăng tuyển đã lưu</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Hồ sơ ứng viên</a>
-                        </li>
-                        </ul>
-                        <ul className="rec-nav-right">
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Đăng tuyển</a>
+                        <Link to={`/HrCandidate`}  className="nav-link">Hồ sơ ứng viên</Link>
                         </li>
                         </ul>
                     </div>
@@ -346,7 +550,7 @@ class Recruit extends Component{
                 <div className="container-fluid published-recuitment-wrapper">
                     <div className="container published-recuitment-content">
                         <div className="row">
-                            <div className="col-md-4 col-sm-12 col-12 lstmaster">
+                            <div className="col-md-4 col-sm-12 col-12 col-lg-4 lstmaster">
                                 <input type="input" placeholder="Tìm kiếm" id="timkiem"/>
                                 <div className="job-tt-contain">
                                     {
@@ -368,7 +572,7 @@ class Recruit extends Component{
                                         />
                                 <div id="divmaster">
                                 
-                                    <button type="button" id="btnadd" className="btn-submit-recuitment" name="">
+                                    <button type="button" id="btnadd" className="btn-submit-recuitment" name="" onClick={()=>this.onClickAdd()}>
                                          <i className="fa fa-floppy-o pr-2"></i>Thêm
                                     </button>
                                 </div>
@@ -389,13 +593,22 @@ class Recruit extends Component{
                                     </h2>
                                 </div>
 
+                                {/* loader */}
+                                {/* <div class="overlay">
+                                    <div class="overlay__inner">
+                                        <div class="overlay__content"><span class="spinner"></span></div>
+                                    </div>
+                                </div> */}
+
+
+
                                 <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div className="card-body recuitment-body">
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Chức danh<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9">
                                             <select type="text" className="form-control SearchCustom" name="JobWSelected" onChange={this.GetSelectJobW}>
-                                                    <option  value="" ></option>
+                                                    <option  value="" selected={dataDetail.jobWCode == null || dataDetail.jobWCode == ""} ></option>
                                                     {/* selected={infperson.provinceCode == null} */}
                                                       {this.ShowJobWorking(ListJobW)}
                                             </select>
@@ -404,20 +617,21 @@ class Recruit extends Component{
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Số lượng cần tuyển</label>
                                         <div className="col-sm-9">
-                                               <input type="number" className="form-control inputtext" onchange={this.onChange} value={dataDetail.quantity} name='quantity'/>
+                                               <input type="number" className="form-control SearchCustom"value={dataDetail.quantity} name='quantity'  onChange={this.onChange} />
+
                                         </div>
                                     </div>
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Ngôn ngữ lập trình<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9">
-                                            <input type="text" className="form-control inputtext" onchange={this.onChange} value={dataDetail.language} name='language' />
+                                            <input type="text" className="form-control SearchCustom" onChange={this.onChange} value={dataDetail.language} name='language' />
                                         </div>
                                     </div>
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Phòng ban</label>
                                         <div className="col-sm-9">
                                             <select type="text" className="form-control SearchCustom" name="DepartmentSelected" onChange={this.GetSelectDep}>
-                                                    <option  value="" ></option>
+                                                    <option  value="" selected={dataDetail.departmentCode == null || dataDetail.departmentCode == ""}></option>
                                                       {this.ShowListDep(ListDepartment)}
                                             </select>
                                         </div>
@@ -426,8 +640,7 @@ class Recruit extends Component{
                                         <label className="col-sm-3 col-form-label text-right label">Loại chức danh</label>
                                         <div className="col-sm-9">
                                             <select type="text" className="form-control SearchCustom" name="TypeJobWSelected" onChange={this.GetSelectTypeJobW}>
-                                                     <option  value="" ></option>
-                                                    {/* selected={infperson.provinceCode == null} */}
+                                                     <option  value="" selected={dataDetail.typeJobWCode == null || dataDetail.typeJobWCode == ""}></option>
                                                       {this.ShowListTypeJobW(ListTypeJobW)}
                                             </select>
                                         </div>
@@ -435,45 +648,64 @@ class Recruit extends Component{
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Lương từ<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9">
-                                            <input type="text" className="form-control inputtext" onchange={this.onChange} value={dataDetail.fromSalary} name='fromSalary' />
+                                            <input type="text" className="form-control SearchCustom" onChange={this.onChange} value={dataDetail.fromSalary} name='fromSalary' />
                                         </div>
                                     </div>
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Lương đến<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9">
-                                            <input type="text" className="form-control inputtext" onchange={this.onChange} value={dataDetail.toSalary} name='toSalary' />
+                                            <input type="text" className="form-control SearchCustom" onChange={this.onChange} value={dataDetail.toSalary} name='toSalary' />
+                                        </div>
+                                    </div>
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Là lương thỏa thuận<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                            <label class="switch">
+                                                <input type="checkbox"  checked={dataDetail.isAgree} name="isAgree" onChange={this.onChange}/>
+                                                <span class="slider round"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Từ ngày<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9">
-                                               <input type="date" className="form-control inputtext" onchange={this.onChange} value={dataDetail.fromDate} name='fromDate' />    
+                                               <input type="date" className="form-control SearchCustom" onChange={this.onChange} value={dataDetail.fromDate} name='fromDate' />    
                                          </div>
                                     </div>
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Đến ngày<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9">
-                                               <input type="date" className="form-control inputtext" onchange={this.onChange} value={dataDetail.toDate} name='toDate' />    
+                                               <input type="date" className="form-control SearchCustom" onChange={this.onChange} value={dataDetail.toDate} name='toDate' />    
                                          </div>
                                     </div>
                                     <div className="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Kinh nghiệm<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9">
-                                             <input type="number" className="form-control inputtext" onchange={this.onChange} value={dataDetail.exp} name='exp'  />
+                                             <input type="number" className="form-control SearchCustom" onChange={this.onChange} value={dataDetail.exp} name='exp'  />
+                                        </div>
+                                    </div>
+                                    <div className="form-group row">
+                                        <label className="col-sm-3 col-form-label text-right label">Đang hiệu lực<span style={{color:"red"}} className="pl-2">*</span></label>
+                                        <div className="col-sm-9">
+                                            <label class="switch">
+                                                <input type="checkbox"  checked={dataDetail.isActive} name="isActive" onChange={this.onChange}/>
+                                                <span class="slider round"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label className="col-sm-3 col-form-label text-right label">Logo<span style={{color:"red"}} className="pl-2">*</span></label>
                                         <div className="col-sm-9 ">
-                                        <div id="drop-area">
-                                    
-                                            <input type="file" id="fileElem" multiple="" accept="image/*" onchange="handleFiles(this.files)" />
-                                            <label style={{cursor: "pointer;"}} for="fileElem">Tải ảnh lên hoặc kéo thả vào đây</label>
-                                            <progress id="progress-bar" max="100" value="0" class="d-none"></progress>
-                                            <div id="gallery"></div>
-                                        
-                                        </div>
-                                        
+                                            <div className="avatar-upload">
+                                                    <div className="avatar-edit">
+                                                        <input type="file" id="imageUpload"  onChange={this.onImageChange}/>   {/*accept=".png, .jpg, .jpeg" */}
+                                                        <label htmlFor="imageUpload"></label>
+                                                    </div>
+                                                    <div className="avatar-preview">
+                                                        <div id="imagePreview" style={{backgroundImage: 'url("data:image/jpeg;base64,' + dataDetail.photo + '")'}} >  {/*style={{backgroundImage:Avatar }} */}
+                                                        </div>
+                                                    </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -494,7 +726,7 @@ class Recruit extends Component{
                                 <div id="collapseTwo" className="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                     <div className="card-body recuitment-body">
                                              <CKEditor
-                                                                    content={123}
+                                                                    content={dataDetail.benefits}
                                                                     events={{
                                                                         blur: this.onBlurbenefits,
                                                                         afterPaste: this.afterbenefits,
@@ -519,7 +751,7 @@ class Recruit extends Component{
                                 <div id="collapseTwo" className="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                     <div className="card-body recuitment-body">
                                              <CKEditor
-                                                                    content={123}
+                                                                    content={dataDetail.required}
                                                                     events={{
                                                                         blur: this.onBlurrequired,
                                                                         afterPaste: this.afterrequired,
@@ -545,7 +777,7 @@ class Recruit extends Component{
                                 <div id="collapseTwo" className="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                     <div className="card-body recuitment-body">
                                              <CKEditor
-                                                                    content={123}
+                                                                     content={dataDetail.jobdescription}
                                                                     events={{
                                                                         blur: this.onBlurdescription,
                                                                         afterPaste: this.afterdescription,
@@ -556,10 +788,10 @@ class Recruit extends Component{
                                 </div>
                                 </div>
                                 <div className="rec-submit" id="divsubmit">
-                                     <button  id="btnxoa" className="btn-submit-recuitment" name="">
+                                     <button  type="button" id="btnxoa" className="btn-submit-recuitment" name="" onClick={()=>this.onDeleteRecruit(dataDetail.recruitID)}>
                                          <i className="fa fa-trash-o pr-2"></i>Xóa
                                     </button>
-                                    <button type="submit" id="btnluu" className="btn-submit-recuitment" name="">
+                                    <button type="button" id="btnluu" className="btn-submit-recuitment" name="" onClick={()=>this.doSaveAfterValidate()}>
                                          <i className="fa fa-floppy-o pr-2"></i>Lưu
                                     </button>
                                 </div>
@@ -571,5 +803,6 @@ class Recruit extends Component{
     </div>
         );
     }
+    }   
 }
 export default Recruit;

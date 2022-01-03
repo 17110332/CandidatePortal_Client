@@ -47,7 +47,7 @@
     z-index: 3000;
     background-color: #008ccb ; /*#0065d1*/
     padding-left: 0px;
-    width: 20%;
+    width: 18%;
 }
 #btnadd{
     float: right;
@@ -56,6 +56,7 @@
     border-color: #0065d1;
 }
 .itemdatamaster{
+    margin-bottom: 25px;
     cursor: pointer;
 }
 #timkiem{
@@ -64,6 +65,7 @@
 
 }
 .lstmaster{
+    height: 100vh;
     background: #fff;
 }
 .recuitment-form{
@@ -145,4 +147,7 @@
   
   .slider.round:before {
     border-radius: 50%;
+  }
+  .indam{
+    font-weight: bold;
   }
