@@ -79,17 +79,12 @@ class Login extends Component{
                                                     <Link className="nav-link" to="/HrProfile">Quản lý tuyển dụng</Link>
                                             </li>
                                         }
-                                        {/* <li className="nav-item dropdown">
-                                            <a href="index.html" className="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Dropdown
-                                            </a>
-                                            <div className="dropdown-menu tdropdown" aria-labelledby="navbarDropdown">
-                                            <a href="index.html" className="dropdown-item" >Action</a>
-                                            <a href="index.html" className="dropdown-item">Another action</a>
-                                            <div className="dropdown-divider"></div>
-                                            <a href="index.html" className="dropdown-item" >Something else here</a>
-                                            </div>
-                                        </li> */}
+                                         {
+                                            role !=0 && 
+                                            <li className="nav-item">
+                                                    <Link className="nav-link" to="/ResultCandidate">Tra cứu kết quả ứng tuyển</Link>
+                                            </li>
+                                        }
                                 </ul>
                                     <ul className="navbar-nav mr-auto my-2 my-lg-0 tnav-right tn-nav">
                                         <li className="nav-item active">

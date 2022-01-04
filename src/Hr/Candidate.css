@@ -7,13 +7,7 @@
     background: #0065d1;
     border-color: #0065d1;
 }
-#btnxoa{
-    background: #0065d1;
-    border-color: #0065d1;
-    float: right;
-    /* margin-right: -15px; */
-  
-}
+
 /* #divsubmit{
     bottom: 0;
     position: fixed;
@@ -37,7 +31,7 @@
     bottom: 0;
     position: fixed;
     z-index: 3000;
-    width: 37.5%;
+    width: 52%;
     background-color: #008ccb ; /*#0065d1*/
     padding-left: 0px;
 }
@@ -47,13 +41,39 @@
     z-index: 3000;
     background-color: #008ccb ; /*#0065d1*/
     padding-left: 0px;
-    width: 18%;
+    /* width: 18%; */
+    width: 24.9%;
 }
 #btnadd{
-    float: right;
-    /* margin-right: 10px; */
-    background: #0065d1;
-    border-color: #0065d1;
+  float: right;
+  /* margin-right: 10px; */
+  background: #0065d1;
+  border-color: #0065d1;
+}
+#btnxoa{
+  background: orange;
+  border-color: orange;
+  float: right;
+  /* margin-right: -15px; */
+
+}
+#btnquaylai{
+  float: right;
+  /* margin-right: 10px; */
+  background: yellow;
+  border-color: yellow;
+}
+#btnrot{
+  float: right;
+  /* margin-right: 10px; */
+  background: red;
+  border-color: red;
+}
+#btnkhonglamviec{
+  float: right;
+  /* margin-right: 10px; */
+  background: magenta;
+  border-color: magenta;
 }
 .itemdatamaster{
     margin-bottom: 25px;

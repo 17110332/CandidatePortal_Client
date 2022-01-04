@@ -9,6 +9,8 @@ import Myprofile from "./Profile/Myprofile";
 import Recruit from "./Hr/Recruit";
 import Candidate from "./Hr/Candidate"
 import Profilecandidate from "./Profile/Profilecandidate";
+import Candidatetmp from "./Hr/Candidatetmp";
+import ResultCandidate from "./Profile/ResultCandidate";
 const routes = [
     {
         path: "/",
@@ -54,6 +56,16 @@ const routes = [
         path: "/Profilecandidate/:applicantcode",
         exact: false,
         main: ({match})=><Profilecandidate match={match} />
+    },
+    {
+        path: "/HrCandidateTmp",
+        exact: false,
+        main: ()=><Candidatetmp />
+    },
+    {
+        path: "/ResultCandidate",
+        exact: false,
+        main: ()=><ResultCandidate />
     },
     {
         path: "",

@@ -189,33 +189,11 @@ class Search extends Component{
                         </div>
                     </div>
                     <div className="banner-content">
-                        {/* <h3>1000+ việc đang tuyển</h3>
-                        <div className="banner-tags">
-                            <ul>
-                                <li><a href="index.html">Java</a></li>
-                                <li><a href="index.html">Python</a></li>
-                                <li><a href="index.html">Tester</a></li>
-                                <li><a href="index.html">QA QC</a></li>
-                                <li><a href="index.html">.NET</a></li>
-                                <li><a href="index.html">Javascript</a></li>
-                                <li><a href="index.html">Business Analyst</a></li>
-                                <li><a href="index.html">Designer</a></li>
-                            </ul>
-                        </div> */}
                     </div>
                 </div>
                 <div className="container-fluid search-fluid">
                     <div className="container">
                         <div className="search-wrapper"  style={{marginTop:'-11rem;'}}>
-    
-                        {/* <ul className="nav nav-tabs search-nav-tabs" id="myTab" role="tablist">
-                        <li className="nav-item search-nav-item">
-                            <a className="nav-link snav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Tìm việc làm</a>
-                        </li>
-                        <li className="nav-item search-nav-item">
-                            <a className="nav-link snav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Tìm công ty</a>
-                        </li>
-                        </ul> */}
                         <div className="tab-content search-tab-content" id="myTabContent">
                
                         <div className="tab-pane stab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">

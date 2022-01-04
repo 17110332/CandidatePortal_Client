@@ -522,15 +522,18 @@ class Recruit extends Component{
                     </button>
                     <div className="collapse navbar-collapse container" id="navbarNava">
                         <ul className="navbar-nav nav-recuitment-li">
-                        <li className="nav-item active">
-                        <Link to={`/HrProfile`}  className="nav-link">Danh sách đăng tuyển</Link>
-                        </li>
-                        {/* <li className="nav-item">
-                            <a className="nav-link" href="#">Danh mục chức danh</a>
-                        </li> */}
-                        <li className="nav-item">
-                        <Link to={`/HrCandidate`}  className="nav-link">Hồ sơ ứng viên</Link>
-                        </li>
+                            <li className="nav-item active">
+                            <Link to={`/HrProfile`}  className="nav-link">Danh sách đăng tuyển</Link>
+                            </li>
+                            {/* <li className="nav-item">
+                                <a className="nav-link" href="#">Danh mục chức danh</a>
+                            </li> */}
+                            <li className="nav-item">
+                                <Link to={`/HrCandidate`}  className="nav-link">Hồ sơ ứng viên</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to={`/HrCandidateTMP`}  className="nav-link">Ứng viên đã lưu</Link>
+                            </li>
                         </ul>
                     </div>
                 </nav>

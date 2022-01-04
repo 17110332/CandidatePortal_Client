@@ -37,7 +37,7 @@ const swalWithBootstrapButtons = swal.mixin({
   
  
 
-class Candidate extends Component{
+class Candidatetmp extends Component{
     constructor(props)
     {
         super(props);
@@ -53,7 +53,7 @@ class Candidate extends Component{
     }
 
     onLoadDataMaster = (callback)=>{
-        axios.get(APIstr +`api/Recruit/GetCandidate/${applicantcode}`)
+        axios.get(APIstr +`api/Recruit/GetCandidateTMP/${applicantcode}`)
         .then(res=>{
             console.log("resss",res)
            this.setState({
@@ -173,13 +173,10 @@ class Candidate extends Component{
             console.log(err)
         })
     }
-    DeleteApplicant=(applicantCode,recruitid,status)=>{
+    DeleteApplicantTMP=(applicantCode,recruitid,)=>{
         let request = new FormData();
-        debugger
         request.set("ApplicantCode",applicantCode);
-        request.set("RecruitID",recruitid);
-        request.set("Status",status);
-        axios.post(APIstr +`api/Recruit/DeleteApplicant/${applicantcode}`,request)
+        axios.post(APIstr +`api/Recruit/DeleteApplicantTMP/${applicantcode}`,request)
         .then(res=>{
             console.log("deleteeeeeee",res)
             toast.success('Đã xóa xong!');
@@ -262,18 +259,18 @@ class Candidate extends Component{
                     </button>
                     <div className="collapse navbar-collapse container" id="navbarNava">
                         <ul className="navbar-nav nav-recuitment-li">
-                            <li className="nav-item active">
-                                <Link to={`/HrProfile`}  className="nav-link">Danh sách đăng tuyển</Link>
-                                </li>
-                                {/* <li className="nav-item">
-                                    <a className="nav-link" href="#">Danh mục chức danh</a>
-                                </li> */}
-                                <li className="nav-item">
-                                    <Link to={`/HrCandidate`}  className="nav-link">Hồ sơ ứng viên</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to={`/HrCandidateTMP`}  className="nav-link">Ứng viên đã lưu</Link>
-                                </li>
+                        <li className="nav-item active">
+                            <Link to={`/HrProfile`}  className="nav-link">Danh sách đăng tuyển</Link>
+                            </li>
+                            {/* <li className="nav-item">
+                                <a className="nav-link" href="#">Danh mục chức danh</a>
+                            </li> */}
+                            <li className="nav-item">
+                                <Link to={`/HrCandidate`}  className="nav-link">Hồ sơ ứng viên</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to={`/HrCandidateTMP`}  className="nav-link">Ứng viên đã lưu</Link>
+                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -299,7 +296,7 @@ class Candidate extends Component{
                                     { this.ShowListCandidate(lstCandidate)}
                                 </div>
                                 <div id="divmaster">
-                                    <button type="button" id="btnadd" className="btn-submit-recuitment" onClick={()=>this.DeleteApplicant(dataCandidate.applicantCode,dataCandidate.recruitID,dataCandidate.status)}>
+                                    <button type="button" id="btnadd" className="btn-submit-recuitment" onClick={()=>this.DeleteApplicantTMP(dataCandidate.applicantCode,dataCandidate.recruitID)}>
                                          <i className="fa fa-floppy-o pr-2"></i>Xóa
                                     </button>
                                 </div>
@@ -439,40 +436,6 @@ class Candidate extends Component{
                                                 </div>
                                             </div>
                                      </div>
-                                    <div className="rec-submit" id="divsubmit">
-                                        { 
-                                            dataCandidate.status==3 && 
-                                            <button  type="button"  id="btnkhonglamviec" className="btn-submit-recuitment" title="Không xác nhận làm việc"
-                                            onClick={()=>this.UpdateStatus(dataCandidate.applicantCode+"_khonglamviec",dataCandidate.recruitID,dataCandidate.status)}>
-                                                <i className="fa fa-times pr-2"></i>
-                                            </button>
-                                        }
-                                        {
-                                             dataCandidate.status==2 && 
-                                             <button  type="button" id="btnrot" className="btn-submit-recuitment" title="Rớt phỏng vấn"
-                                             onClick={()=>this.UpdateStatus(dataCandidate.applicantCode+"_rot",dataCandidate.recruitID,dataCandidate.status)}>
-                                                <i className="fa fa-times pr-2"></i>
-                                            </button>
-                                        }
-                                     
-                                        {
-                                            dataCandidate.status>1 &&
-                                            <button  type="button" id="btnquaylai" title="Trả về" className="btn-submit-recuitment" 
-                                            onClick={()=>this.UpdateStatus(dataCandidate.applicantCode+"_quaylai",dataCandidate.recruitID,dataCandidate.status)}>
-                                                <i className="fa fa-undo pr-2"></i>
-                                            </button>
-                                        } 
-                                        {
-                                             dataCandidate.status!=4 &&
-                                            <button  type="button" id="btnxoa" className="btn-submit-recuitment" name="" onClick={()=>this.UpdateStatus(dataCandidate.applicantCode+"_updatestatus",dataCandidate.recruitID,dataCandidate.status)}>
-                                            <i className="fa fa-floppy-o pr-2"></i>{title}
-                                            </button>
-                                        }
-                                      
-                                        <button type="button" id="btnluu" className="btn-submit-recuitment" name="" onClick={()=>this.SaveDoc(dataCandidate.applicantCode)}>
-                                            <i className="fa fa-floppy-o pr-2"></i>Lưu hồ sơ
-                                        </button>
-                                    </div>
                                 </form>
                             </div>
                 </div>
@@ -483,4 +446,4 @@ class Candidate extends Component{
         }
     }   
 }
-export default Candidate;
+export default Candidatetmp;
