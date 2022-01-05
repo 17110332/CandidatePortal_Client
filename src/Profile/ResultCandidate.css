@@ -3,3 +3,22 @@
     margin-right: -290px;
     margin-left: 157px;
   } */
+
+  #processbar{
+    margin-left: 180px;
+    height: 100vh;
+  }
+  #tennguoitracuu{
+    font-size: x-large;
+    font-weight: 600;
+    color: blue;
+    /* margin: 0 auto; */
+    margin-left: 130px;
+  }
+  .tennguoitracuu{
+    font-size: x-large;
+    font-weight: 600;
+    color: blue;
+    /* margin: 0 auto; */
+    margin-left: 130px;
+  }

@@ -54,47 +54,50 @@ class Jobitem extends Component{
                   }
                 }
               }).then(function(res) {
-                    if(res.value ==1) // hồ sơ trực tuyến
+                    if(res.value)
                     {
-                        if(!info.birthDay || !info.districtCode || !info.email || !info.exp || !info.firstName || !info.gender
-                            || !info.graduated || !info.introduceYourself || !info.lastName || !info.level || !info.married || !info.mobile
-                            || !info.provinceCode || !info.school || !info.skill || !info.skillOther || !info.streetName || !info.titleDoc || !info.wardCode || !info.workProgress)
+
+                        if(res.value ==1) // hồ sơ trực tuyến
                         {
-                            toast.warning("Vui lòng điền đủ thông tin cá nhân tại trang cá nhân!");
-                            return;
+                            if(!info.birthDay || !info.districtCode || !info.email || !info.exp || !info.firstName || !info.gender
+                                || !info.graduated || !info.introduceYourself || !info.lastName || !info.level || !info.married || !info.mobile
+                                || !info.provinceCode || !info.school || !info.skill || !info.skillOther || !info.streetName || !info.titleDoc || !info.wardCode || !info.workProgress)
+                            {
+                                toast.warning("Vui lòng điền đủ thông tin cá nhân tại trang cá nhân!");
+                                return;
+                            }
                         }
-                    }
-                    else // file đính kèm
-                    {
-                        if(!info.cvApplicant)
+                        else if(res.value ==2) // file đính kèm
                         {
-                            toast.warning("Vui lòng đính kèm tệp CV tại trang cá nhân!");
+                            if(!info.cvApplicant)
+                            {
+                                toast.warning("Vui lòng đính kèm tệp CV tại trang cá nhân!");
+                                return
+                            }
+                        }
+                         //gọi api insert db => thông báo nếu ko lỗi hoặc vướng validate
+                        let Params = new FormData();
+                        Params.set('ApplicantCode',applicantcode);
+                        Params.set('RecruitID',recruitID);
+                        axios.post(APIstr +"api/Home/onApply",Params)
+                        .then(res=>{
+                            console.log("resss",res);
+                            if(res && res.data && res.data.error)
+                            {
+                                toast.error(res.data.error);
+                                return;
+                            }
+                            swal.fire('Ứng tuyển thành công!','Vui lòng đợi nhân sự liên hệ!', 'success')
+                        })
+                        .catch(err=>{
+                            toast.error("API unsuccess");
                             return
-                        }
+                        })
                     }
-                    //gọi api insert db => thông báo nếu ko lỗi hoặc vướng validate
-                    let Params = new FormData();
-                    Params.set('ApplicantCode',applicantcode);
-                    Params.set('RecruitID',recruitID);
-                    axios.post(APIstr +"api/Home/onApply",Params)
-                    .then(res=>{
-                        console.log("resss",res);
-                        if(res && res.data && res.data.error)
-                        {
-                            toast.error(res.data.error);
-                            return;
-                        }
-                        swal.fire('Ứng tuyển thành công!','Vui lòng đợi nhân sự liên hệ!', 'success')
-                    })
-                    .catch(err=>{
-                        toast.error("API unsuccess");
-                        return
-                    })
-                   
               })
         })
         .catch(err=>{
-
+            console.log("error: ",err)
         })
       
     }
@@ -158,7 +161,7 @@ class Jobitem extends Component{
     ShowJobs = (lstJob)=>{
         var result = null;
         if(lstJob.length > 0)
-        {
+        { 
             console.log("lstJob",lstJob)
              result=lstJob.map((item, index)=>{
                     let idheart = "heart_"+index;

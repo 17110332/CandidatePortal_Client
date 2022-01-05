@@ -80,7 +80,7 @@ class Login extends Component{
                                             </li>
                                         }
                                          {
-                                            role !=0 && 
+                                            role ==1 && 
                                             <li className="nav-item">
                                                     <Link className="nav-link" to="/ResultCandidate">Tra cứu kết quả ứng tuyển</Link>
                                             </li>
@@ -94,9 +94,13 @@ class Login extends Component{
                                             FullName !="" && 
                                             <li className="nav-item dropdown">
                                                  <a className="nav-link dropdown-toggle" to="/Register" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Xin chào {FullName}</a>
-                                                 <div className="dropdown-menu tdropdown" aria-labelledby="navbarDropdown">
-                                                    <Link className="dropdown-item" to="/Myprofile">Thông tin cá nhân</Link>
-                                                </div>
+                                                 {
+                                                     role ==1 && 
+                                                    <div className="dropdown-menu tdropdown" aria-labelledby="navbarDropdown">
+                                                         <Link className="dropdown-item" to="/Myprofile">Thông tin cá nhân</Link>
+                                                    </div>
+                                                 }
+                                                
                                             </li>
                                             
                                         }

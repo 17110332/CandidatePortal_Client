@@ -12,7 +12,7 @@ class Benefit extends Component{
                         </div>
                         <div className="col-md-6 col-sm-12 col-12 news-item">
                             <div className="news-item-inner">
-                            <img className='imgbenefit' src="https://tuyendung.fptshop.com.vn/upload/slider/1.jpg" alt="" /> 
+                            <img className='imgbenefit' src="https://namtienevent.com/wp-content/uploads/2021/06/to-chuc-team-building-1.jpg" alt="" /> 
                             </div>
                         </div>
                         <div className="col-md-6 col-sm-12 col-12 news-item">

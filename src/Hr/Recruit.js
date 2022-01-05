@@ -78,6 +78,11 @@ class Recruit extends Component{
         }
     }
     componentDidMount(){
+        let ele = document.getElementsByClassName("footeinfo");
+        for(let i=0; i<ele.length;i++)
+        {
+            ele[i].style.display="none";
+        }
         this.GetListTypeJobWoking();
         this.GetListJobWorking();
         this.GetListDepartment();
@@ -297,10 +302,15 @@ class Recruit extends Component{
         {
           result=lst.map((item, index)=>{
             let iditem ="itemdatamaster_"+index;
+            let extension = 'jpeg'
+            if(item.photo && item.photo.length >0 && item.photo.charAt(0)=='i')
+            {
+                extension = 'png'
+            }
             return (          
                 <div className="job-tt-item itemdatamaster" id={iditem} key={index} onClick={()=>this.onClickMaster(item.recruitID,iditem)}>
                     <a className="thumb">
-                        <div style={{backgroundImage: 'url("data:image/jpeg;base64,' + item.photo + '")'}} ></div>  
+                        <div style={{backgroundImage: `url("data:image/${extension};base64,` + item.photo + '")'}} ></div>  
                     </a>
                     <div className="info">
                         <a  className="jobname">{item.jobWName}</a>
@@ -358,7 +368,7 @@ class Recruit extends Component{
         let file = e.target.files[0];  
         if(file && (file.type !="image/png") && (file.type !="image/jpg") && (file.type !="image/jpeg"))
         {
-            toast.error('Avatar không đúng định dạng!')
+            toast.error('Logo đăng tuyển không đúng định dạng!')
             return;
         }
         let reader = new FileReader();

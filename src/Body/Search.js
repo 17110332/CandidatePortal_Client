@@ -253,18 +253,18 @@ class Search extends Component{
                     </div>
                     </div>
                     <div class="container-fluid">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="home-ads">
-                                    <a href="#">
-                                        <img src="img/hna2.jpg"/>
-                                    </a>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="home-ads">
+                                        <a href="#">
+                                            <img src="img/hna2.jpg"/>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         )
     }

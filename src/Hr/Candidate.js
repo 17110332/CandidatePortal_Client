@@ -49,6 +49,12 @@ class Candidate extends Component{
         }
     }
     componentDidMount(){
+        let ele = document.getElementsByClassName("footeinfo");
+        for(let i=0; i<ele.length;i++)
+        {
+            ele[i].style.display="none";
+        }
+      
         this.onLoadDataMaster();
     }
 
