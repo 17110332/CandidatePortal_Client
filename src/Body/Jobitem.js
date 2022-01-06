@@ -12,6 +12,7 @@ const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStora
 const applicantcode=tokenlogin !="" && tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
 const sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
+const role = base64_decode(sessionlogin).split("!@#$#@!").length >1 ?base64_decode(sessionlogin).split("!@#$#@!")[1] : 1; //1: ứng viên, 2: hr
 
 class Jobitem extends Component{ 
 
@@ -214,9 +215,13 @@ class Jobitem extends Component{
                                            
                                         </div>
                                     </div>
-                                    <div className="wrap-btn-appl" style={{marginTop:"-80px"}}>
-                                        <button id="btnapply" className="btn btn-appl" onClick={()=>this.onApply(item.recruitID)}>Ứng tuyển</button>
-                                    </div>
+                                    {
+                                        role ==1 &&
+                                        <div className="wrap-btn-appl" style={{marginTop:"-80px"}}>
+                                            <button id="btnapply" className="btn btn-appl" onClick={()=>this.onApply(item.recruitID)}>Ứng tuyển</button>
+                                        </div>
+                                    }
+                                    
                                 </div>
                             </div>
                     )

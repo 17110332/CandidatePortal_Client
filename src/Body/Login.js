@@ -100,7 +100,7 @@ class Login extends Component{
                   <button type="button" className="btn btn-primary float-right btn-login d-block w-100" onClick={this.onLogin}>
                     Đăng Nhập
                   </button>
-                  <div className="form-group d-block w-100 mt-5">
+                  {/* <div className="form-group d-block w-100 mt-5">
                     <div className="text-or text-center">
                       <span>Hoặc</span>
                     </div>
@@ -129,7 +129,7 @@ class Login extends Component{
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </form>
               </div>
             </div>

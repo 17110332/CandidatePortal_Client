@@ -11,6 +11,7 @@ const tokenlogin = localStorage.getItem("TokenLogin") ? base64_decode(localStora
 const applicantcode= tokenlogin !="" && tokenlogin.split("___+=()*").length > 0 ? tokenlogin.split("___+=()*")[0] :'';
 const APIstr = Listconst.API;
 const sessionlogin = localStorage.getItem("TokenLogin") ? localStorage.getItem("TokenLogin"):""
+const role = base64_decode(sessionlogin).split("!@#$#@!").length >1 ?base64_decode(sessionlogin).split("!@#$#@!")[1] : 1; //1: ứng viên, 2: hr
 
 class Jobdetail extends Component{
 
@@ -163,6 +164,8 @@ class Jobdetail extends Component{
                   }
                 }
               }).then(function(res) {
+                  if(res.value)
+                  {
                     if(res.value ==1) // hồ sơ trực tuyến
                     {
                         if(!info.birthDay || !info.districtCode || !info.email || !info.exp || !info.firstName || !info.gender
@@ -196,14 +199,14 @@ class Jobdetail extends Component{
                         swal.fire('Ứng tuyển thành công!','Vui lòng đợi nhân sự liên hệ!', 'success')
                     })
                     .catch(err=>{
-                        toast.error("API unsuccess");
-                        return
+                       console.log(err)
                     })
+                  }
                    
               })
         })
         .catch(err=>{
-
+            console.log(err)
         })
       
     }
@@ -254,7 +257,10 @@ class Jobdetail extends Component{
                             <div className="col-md-3 col-sm-12 col-12">
                             <div className="jd-header-wrap-right">
                                 <div className="jd-center">
-                                <button onClick={()=>this.onApply(JobDetail.recruitID)} className="btn btn-primary btn-apply">Nộp đơn</button>
+                                    {
+                                        role ==1 && 
+                                        <button onClick={()=>this.onApply(JobDetail.recruitID)} className="btn btn-primary btn-apply">Nộp đơn</button>
+                                    }
                                 <p className="jd-view">Lượt xem: <span>{JobDetail.view}</span></p>
                                 </div>
                             </div>
