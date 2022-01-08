@@ -98,9 +98,9 @@ class Login extends Component{
                                                      role ==1 && 
                                                     <div className="dropdown-menu tdropdown" aria-labelledby="navbarDropdown">
                                                          <Link className="dropdown-item" to="/Myprofile">Thông tin cá nhân</Link>
+                                                         <Link className="dropdown-item" to="/Changepassword">Đổi mật khẩu</Link>
                                                     </div>
                                                  }
-                                                
                                             </li>
                                             
                                         }

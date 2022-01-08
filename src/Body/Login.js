@@ -93,7 +93,8 @@ class Login extends Component{
                     </div>
                   </div>
                   <div className="form-group d-block frm-text">
-                    <a href="#" className="fg-login d-inline-block">Quên mật khẩu</a>
+                    <Link className="fg-login d-inline-block" to="/Forgotpassword">Quên mật khẩu</Link>
+
                     <Link className="fg-login float-right d-inline-block" to="/Register">Bạn chưa có tài khoản? Đăng ký</Link>
 
                   </div>

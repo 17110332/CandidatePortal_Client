@@ -11,6 +11,8 @@ import Candidate from "./Hr/Candidate"
 import Profilecandidate from "./Profile/Profilecandidate";
 import Candidatetmp from "./Hr/Candidatetmp";
 import ResultCandidate from "./Profile/ResultCandidate";
+import Changepassword from "./Body/Changepassword";
+import Forgotpassword from "./Body/Forgotpassword";
 const routes = [
     {
         path: "/",
@@ -26,6 +28,16 @@ const routes = [
         path: "/Login",
         exact: false,
         main: ()=><Login />
+    },
+    {
+        path: "/Changepassword",
+        exact: false,
+        main: ()=><Changepassword />
+    },
+    {
+        path: "/Forgotpassword",
+        exact: false,
+        main: ()=><Forgotpassword />
     },
     {
         path: "/Register",

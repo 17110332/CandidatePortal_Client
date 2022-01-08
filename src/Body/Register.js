@@ -167,7 +167,7 @@ class Register extends Component{
                     Đăng Ký
                   </button>
                  
-                  <div className="form-group d-block w-100 mt-5">
+                  {/* <div className="form-group d-block w-100 mt-5">
                     <div className="text-or text-center">
                       <span>Hoặc</span>
                     </div>
@@ -196,7 +196,7 @@ class Register extends Component{
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </form>
               </div>
             </div>
