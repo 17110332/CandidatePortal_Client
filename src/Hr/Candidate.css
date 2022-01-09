@@ -31,7 +31,8 @@
     bottom: 0;
     position: fixed;
     z-index: 3000;
-    width: 52%;
+     /* width: 52%;  */
+     width: 47%;
     background-color: #008ccb ; /*#0065d1*/
     padding-left: 0px;
 }
