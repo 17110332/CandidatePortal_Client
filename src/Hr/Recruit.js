@@ -564,7 +564,17 @@ class Recruit extends Component{
                     <div className="container published-recuitment-content">
                         <div className="row">
                             <div className="col-md-4 col-sm-12 col-12 col-lg-4 lstmaster">
-                                <input type="input" placeholder="Tìm kiếm" id="timkiem"/>
+                                {/* <input type="input" placeholder="Tìm kiếm" id="timkiem"/> */}
+                                <div className="card-header recuitment-card-header">
+                                    <h2 className="mb-0">
+                                    <a className="btn btn-link btn-block text-left recuitment-header" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Việc làm đã đăng
+                                        <span id="clickc1_advance2" className="clicksd">
+                                        <i className="fa fa fa-angle-up"></i>
+                                        </span>
+                                    </a>
+                                    </h2>
+                                </div>
                                 <div className="job-tt-contain">
                                     {
                                         loading ? <Loading />
