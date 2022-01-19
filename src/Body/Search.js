@@ -44,7 +44,7 @@ class Search extends Component{
             console.log(err)
         })
         //địa điểm làm việc
-        axios.get(APIstr +"api/Home/GetProvince")
+        axios.get(APIstr +"api/Home/GetProvincesHome")
         .then(res=>{
             this.setState({
                 ListLocation:res && res.data.length >0 ? res.data :[]

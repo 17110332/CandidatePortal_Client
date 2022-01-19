@@ -41,6 +41,7 @@ class Login extends Component{
             FullName:""
         },()=>{
             localStorage.removeItem("TokenLogin");
+            window.location.reload();
         })
     }
     render()
@@ -74,13 +75,13 @@ class Login extends Component{
                                             <a className="nav-link" href="https://www.lacviet.vn/tin-tuc" target="_blank">Tin Tức</a>
                                         </li>
                                         {
-                                            role ==2 && 
+                                            role ==2 && localStorage.getItem("TokenLogin") && 
                                             <li className="nav-item">
                                                     <Link className="nav-link" to="/HrProfile">Quản lý tuyển dụng</Link>
                                             </li>
                                         }
                                          {
-                                            role ==1 && 
+                                            role ==1 && localStorage.getItem("TokenLogin") &&
                                             <li className="nav-item">
                                                     <Link className="nav-link" to="/ResultCandidate">Tra cứu kết quả ứng tuyển</Link>
                                             </li>
